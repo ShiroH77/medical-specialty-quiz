@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>診療科マッチング診断 v2</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     WELCOME / MODE SELECTION
+══════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-top">
+    <div class="welcome-top-inner">
+      <div class="app-logo">+</div>
+      <h1 class="app-title">診療科マッチング診断</h1>
+      <p class="app-subtitle">あなたに合う診療科を発見しよう</p>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <p class="mode-heading">モードを選んでスタート</p>
+
+    <div class="mode-grid">
+      <button class="mode-card" onclick="selectMode('student')">
+        <div class="mode-icon-wrap mode-icon-student">
+          <span class="mode-icon-char">M</span>
+        </div>
+        <div class="mode-info">
+          <div class="mode-title">医学生向け</div>
+          <div class="mode-sub">診療科選びモード</div>
+          <div class="mode-desc">進路検討に特化した質問と、臨床的な解説で合う診療科を探す</div>
+        </div>
+        <div class="mode-arrow">›</div>
+      </button>
+
+      <button class="mode-card" onclick="selectMode('public')">
+        <div class="mode-icon-wrap mode-icon-public">
+          <span class="mode-icon-char">?</span>
+        </div>
+        <div class="mode-info">
+          <div class="mode-title">一般向け</div>
+          <div class="mode-sub">何科タイプ？モード</div>
+          <div class="mode-desc">専門用語なし！性格診断感覚で、あなたに合う診療科タイプを発見</div>
+        </div>
+        <div class="mode-arrow">›</div>
+      </button>
+    </div>
+
+    <div class="welcome-meta">
+      <span>30問</span>
+      <span class="dot">·</span>
+      <span>5段階評価</span>
+      <span class="dot">·</span>
+      <span>所要時間 約5分</span>
+    </div>
+
+    <div class="disclaimer">
+      <strong>注意：</strong>本ツールは自己理解・進路検討の補助を目的とした参考情報です。医学的な適性診断や進路の確定を行うものではありません。実習・見学・指導医との対話を通じてご検討ください。
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     QUIZ SCREEN
+══════════════════════════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-header-row">
+      <button id="btn-prev" class="btn-prev" onclick="prevQuestion()">← 戻る</button>
+      <span id="q-counter" class="q-counter">1 / 30</span>
+    </div>
+    <p class="q-phase-msg" id="q-phase-msg"></p>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="question-card">
+      <div class="q-dim-label" id="q-dim-label"></div>
+      <p class="q-text" id="q-text"></p>
+
+      <div class="scale-hint-row">
+        <span>全くそう思わない</span>
+        <span>強くそう思う</span>
+      </div>
+
+      <div class="scale-buttons" id="scale-buttons">
+        <button class="scale-btn" data-val="1" onclick="answer(1)">1</button>
+        <button class="scale-btn" data-val="2" onclick="answer(2)">2</button>
+        <button class="scale-btn" data-val="3" onclick="answer(3)">3</button>
+        <button class="scale-btn" data-val="4" onclick="answer(4)">4</button>
+        <button class="scale-btn" data-val="5" onclick="answer(5)">5</button>
+      </div>
+
+      <div class="scale-labels-row">
+        <span>全くそう思わない</span>
+        <span>どちらでもない</span>
+        <span>強くそう思う</span>
+      </div>
+
+      <p class="scale-hint-prev" id="scale-hint-prev"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     RESULTS SCREEN
+══════════════════════════════ -->
+<div id="screen-results" class="screen">
+  <div id="results-banner"></div>
+
+  <div class="card-wrap">
+    <div id="results-notices"></div>
+    <div id="results-summary"></div>
+
+    <div id="results-detail">
+      <div id="results-hero"></div>
+      <div id="results-compact"></div>
+
+      <div id="results-share"></div>
+
+      <div class="disclaimer" id="results-disclaimer" style="margin-top: 8px;">
+        <strong>注意：</strong>本結果は自己理解・進路検討のための参考情報です。医学的な適性診断や進路の確定を行うものではありません。
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-retry" onclick="startQuiz()">もう一度診断する</button>
+      <button class="btn-top" onclick="goTop()">トップに戻る</button>
+    </div>
+  </div>
+</div>
+
+<script src="scoring.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
