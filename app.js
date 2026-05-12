@@ -507,6 +507,7 @@ var mode             = 'student'; // 'student' | 'public'
 var currentIndex     = 0;
 var answers          = {};        // { qid: 1-5 }
 var currentShareText = '';        // for copy button
+var currentRanked    = [];        // full ranked list for all-specialties view
 var _answerTimer     = null;      // debounce: cancel pending navigation on back/home
 
 // ══════════════════════════════════════════════════════════════════
@@ -711,6 +712,8 @@ function calcScores() {
 //  DIMENSION LABELS
 // ══════════════════════════════════════════════════════════════════
 
+var DIMS = ['hands_on','long_term','acute','research','technical','communication','visual','lifestyle','variety','precision'];
+
 var DIM_LABEL_MAP = {
   hands_on:'手技・手術への適性', long_term:'長期的な患者との関わり',
   acute:'急性期・緊急対応力', research:'研究・学術的思考',
@@ -882,9 +885,18 @@ function renderResults() {
   document.getElementById('results-compact').innerHTML = html;
 
   // ── Share Section ───────────────────────────────────────────────
-  currentShareText = buildShareText(best.sp, best.pct, isPublic);
+  currentShareText = buildShareText(top5, isPublic);
   var shareEl = document.getElementById('results-share');
   if (shareEl) shareEl.innerHTML = buildShareSection(currentShareText, isPublic);
+
+  // ── All Specialties Section ─────────────────────────────────────
+  currentRanked = ranked;
+  var allEl = document.getElementById('results-all');
+  if (allEl) allEl.innerHTML = buildAllSpecialtiesSection(ranked, isPublic);
+
+  // ── Compare Section ─────────────────────────────────────────────
+  var compareEl = document.getElementById('results-compare');
+  if (compareEl) compareEl.innerHTML = buildCompareSection(isPublic);
 
   // ── Disclaimer ──────────────────────────────────────────────────
   var disclaimerEl = document.getElementById('results-disclaimer');
@@ -925,17 +937,26 @@ function buildNoticesHtml(summary) {
 
 // ── Share text & section ──────────────────────────────────────────
 
-function buildShareText(sp, pct, isPublic) {
+function buildShareText(top5, isPublic) {
+  var best = top5[0];
+  var sp   = best.sp;
+  var url  = location.origin + location.pathname;
+
   if (isPublic) {
     return '私は「' + sp.typeName + '」でした！\n' +
            sp.oneLine + '\n\n' +
            (sp.friendComment || '') + '\n\n' +
-           'あなたは何タイプ？ → 診療科マッチング診断';
+           'あなたも診断してみて👇\n' + url;
   }
-  return '【診療科マッチング診断】\n' +
-         '1位：' + sp.name + '（マッチ度 ' + pct + '%）\n' +
-         sp.tagline + '\n\n' +
-         'あなたも試してみてください！';
+
+  var lines = ['私の診療科・医師キャリア適性診断 結果'];
+  top5.forEach(function(item, i) {
+    lines.push((i + 1) + '位：' + item.sp.name);
+  });
+  lines.push('');
+  lines.push('あなたも診断してみて👇');
+  lines.push(url);
+  return lines.join('\n');
 }
 
 function buildShareSection(text, isPublic) {
@@ -944,6 +965,229 @@ function buildShareSection(text, isPublic) {
       '<div class="share-box-label">' + (isPublic ? '📣 友達にシェアしよう' : '📣 シェアする') + '</div>' +
       '<div class="share-text">' + esc(text).replace(/\n/g, '<br>') + '</div>' +
       '<button class="btn-copy" id="btn-copy" onclick="copyShareText()">結果をコピー 📋</button>' +
+    '</div>'
+  );
+}
+
+// ── All Specialties Section ───────────────────────────────────────
+
+function buildAllSpecialtiesSection(ranked, isPublic) {
+  var rows = ranked.map(function(item, i) {
+    var sp          = item.sp;
+    var uid         = 'allsp-' + sp.id;
+    var displayName = isPublic && sp.typeName ? sp.typeName : sp.name;
+    var shortDesc   = isPublic
+      ? (sp.catchphrase || sp.oneLine || sp.tagline || '')
+      : (sp.tagline || sp.desc || '');
+    var fullDesc    = isPublic && sp.publicDescription
+      ? sp.publicDescription
+      : (sp.studentDescription || sp.desc || '');
+    var strengthTags = sp.strengths
+      ? sp.strengths.map(function(s) { return '<span class="tag tag-strength">' + esc(s) + '</span>'; }).join('')
+      : '';
+    var cautionTags = sp.cautions
+      ? sp.cautions.map(function(c) { return '<span class="tag tag-caution">' + esc(c) + '</span>'; }).join('')
+      : '';
+
+    return (
+      '<div class="allsp-row">' +
+        '<div class="allsp-header" onclick="toggleAllSp(\'' + uid + '\')">' +
+          '<span class="allsp-rank">' + (i + 1) + '</span>' +
+          (isPublic && sp.emoji ? '<span class="allsp-emoji">' + sp.emoji + '</span>' : '') +
+          '<div class="allsp-name-group">' +
+            '<span class="allsp-name">' + esc(displayName) + '</span>' +
+            '<span class="allsp-short-desc">' + esc(shortDesc) + '</span>' +
+          '</div>' +
+          '<span class="allsp-pct">' + item.pct + '%</span>' +
+          '<span class="allsp-arrow" id="allsp-arrow-' + uid + '">›</span>' +
+        '</div>' +
+        '<div class="allsp-detail" id="allsp-detail-' + uid + '">' +
+          '<p class="allsp-full-desc">' + esc(fullDesc) + '</p>' +
+          (strengthTags
+            ? '<div class="detail-section"><div class="detail-section-title title-strength">' +
+              (isPublic ? 'このタイプが輝く場面' : 'この診療科の魅力') +
+              '</div><div class="tag-list">' + strengthTags + '</div></div>'
+            : '') +
+          (cautionTags
+            ? '<div class="detail-section" style="margin-bottom:0"><div class="detail-section-title title-caution">' +
+              (isPublic ? 'こんな点に注意' : '注意しておきたい点') +
+              '</div><div class="tag-list">' + cautionTags + '</div></div>'
+            : '') +
+        '</div>' +
+      '</div>'
+    );
+  }).join('');
+
+  return (
+    '<div class="allsp-section">' +
+      '<button class="btn-allsp" id="btn-allsp" onclick="toggleAllSpecialties()">' +
+        '他の診療科・キャリアも見る ▼' +
+      '</button>' +
+      '<div class="allsp-list" id="allsp-list">' +
+        rows +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function toggleAllSpecialties() {
+  var list = document.getElementById('allsp-list');
+  var btn  = document.getElementById('btn-allsp');
+  if (!list || !btn) return;
+  var opening = !list.classList.contains('open');
+  list.classList.toggle('open', opening);
+  btn.textContent = opening ? '他の診療科・キャリアを閉じる ▲' : '他の診療科・キャリアも見る ▼';
+  if (opening) setTimeout(function() { list.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+}
+
+function toggleAllSp(uid) {
+  var detail = document.getElementById('allsp-detail-' + uid);
+  var arrow  = document.getElementById('allsp-arrow-' + uid);
+  if (!detail) return;
+  var opening = !detail.classList.contains('open');
+  detail.classList.toggle('open', opening);
+  if (arrow) arrow.textContent = opening ? '∨' : '›';
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  COMPARE SECTION  (志望診療科との差分表示)
+// ══════════════════════════════════════════════════════════════════
+
+function buildCompareSection(isPublic) {
+  var sps = getSpecialtiesForMode(mode);
+  var options = sps.map(function(sp) {
+    var label = isPublic && sp.typeName ? sp.typeName : sp.name;
+    return '<option value="' + esc(sp.id) + '">' + esc(label) + '</option>';
+  }).join('');
+
+  return (
+    '<div class="compare-section">' +
+      '<button class="btn-compare-toggle" id="btn-compare-toggle" onclick="toggleCompareSection()">' +
+        '志望診療科と比較する ▼' +
+      '</button>' +
+      '<div class="compare-body" id="compare-body">' +
+        '<p class="compare-intro">気になる診療科を選ぶと、あなたの傾向との違いを確認できます。</p>' +
+        '<select class="compare-select" id="compare-select" onchange="compareWithSpecialty(this.value)">' +
+          '<option value="">診療科を選んでください…</option>' +
+          options +
+        '</select>' +
+        '<div id="compare-result"></div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function toggleCompareSection() {
+  var body = document.getElementById('compare-body');
+  var btn  = document.getElementById('btn-compare-toggle');
+  if (!body || !btn) return;
+  var opening = !body.classList.contains('open');
+  body.classList.toggle('open', opening);
+  btn.textContent = opening ? '志望診療科と比較する ▲' : '志望診療科と比較する ▼';
+  if (opening) setTimeout(function() { body.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+}
+
+function compareWithSpecialty(spId) {
+  var el = document.getElementById('compare-result');
+  if (!el) return;
+  if (!spId || !currentRanked.length) { el.innerHTML = ''; return; }
+  var sp = getSpecialtiesForMode(mode).find(function(s) { return s.id === spId; });
+  if (!sp) { el.innerHTML = ''; return; }
+  el.innerHTML = buildCompareChart(currentRanked[0].dimScore, sp);
+  // Animate bars after render
+  requestAnimationFrame(function() {
+    setTimeout(function() {
+      el.querySelectorAll('.compare-bar-fill[data-w]').forEach(function(b) {
+        b.style.width = b.getAttribute('data-w') + '%';
+      });
+    }, 60);
+  });
+}
+
+function buildCompareChart(userDims, sp) {
+  var isPublic  = (mode === 'public');
+  var labelMap  = isPublic ? DIM_LABEL_MAP_PUBLIC : DIM_LABEL_MAP;
+  var spName    = isPublic && sp.typeName ? sp.typeName : sp.name;
+
+  var rows  = '';
+  var diffs = [];
+
+  DIMS.forEach(function(d) {
+    var userScore  = userDims[d] != null ? userDims[d] : 0.5;
+    var idealScore = ((sp.weights[d] || 3) - 1) / 4;
+    var diff       = userScore - idealScore;
+    var label      = labelMap[d] || d;
+    var userPct    = Math.round(userScore  * 100);
+    var idealPct   = Math.round(idealScore * 100);
+
+    diffs.push({ d: d, label: label, diff: diff, userScore: userScore, idealScore: idealScore });
+
+    var statusClass, statusText;
+    if (diff < -0.25)     { statusClass = 'diff-gap';      statusText = '低め'; }
+    else if (diff > 0.2)  { statusClass = 'diff-strength'; statusText = '強み'; }
+    else                  { statusClass = 'diff-close';    statusText = '近い'; }
+
+    rows += (
+      '<div class="compare-dim-row">' +
+        '<div class="compare-dim-label">' + esc(label) + '</div>' +
+        '<div class="compare-bar-row">' +
+          '<span class="compare-bar-who">あなた</span>' +
+          '<div class="compare-bar-track">' +
+            '<div class="compare-bar-fill compare-bar-user" data-w="' + userPct + '" style="width:0"></div>' +
+          '</div>' +
+          '<span class="compare-bar-pct">' + userPct + '%</span>' +
+        '</div>' +
+        '<div class="compare-bar-row">' +
+          '<span class="compare-bar-who">' + esc(spName) + '</span>' +
+          '<div class="compare-bar-track">' +
+            '<div class="compare-bar-fill compare-bar-ideal" data-w="' + idealPct + '" style="width:0"></div>' +
+          '</div>' +
+          '<span class="compare-bar-pct">' + idealPct + '%</span>' +
+        '</div>' +
+        '<span class="compare-status-badge ' + statusClass + '">' + statusText + '</span>' +
+      '</div>'
+    );
+  });
+
+  // Summary sentences — top 3 gaps + top 2 strengths
+  var gaps = diffs.filter(function(x) { return x.diff < -0.25; })
+                  .sort(function(a, b) { return a.diff - b.diff; })
+                  .slice(0, 3);
+  var strengths = diffs.filter(function(x) { return x.diff > 0.2; })
+                       .sort(function(a, b) { return b.diff - a.diff; })
+                       .slice(0, 2);
+
+  var sumItems = '';
+  gaps.forEach(function(x) {
+    sumItems +=
+      '<li class="compare-sum-item compare-sum-gap">' +
+        '「' + esc(x.label) + '」を意識するとさらに相性が上がりそうです' +
+      '</li>';
+  });
+  strengths.forEach(function(x) {
+    sumItems +=
+      '<li class="compare-sum-item compare-sum-strength">' +
+        '「' + esc(x.label) + '」はあなたの強みです。この傾向を活かせます' +
+      '</li>';
+  });
+  if (!sumItems) {
+    sumItems =
+      '<li class="compare-sum-item compare-sum-close">' +
+        'あなたの傾向は' + esc(spName) + 'にとても近いです！' +
+      '</li>';
+  }
+
+  return (
+    '<div class="compare-chart">' +
+      '<div class="compare-legend">' +
+        '<span class="compare-leg compare-leg-user">■ あなた</span>' +
+        '<span class="compare-leg compare-leg-ideal">■ ' + esc(spName) + '</span>' +
+      '</div>' +
+      rows +
+      '<div class="compare-summary">' +
+        '<div class="compare-sum-title">傾向の違い</div>' +
+        '<ul class="compare-sum-list">' + sumItems + '</ul>' +
+      '</div>' +
     '</div>'
   );
 }
@@ -1268,7 +1512,11 @@ window.goHomeFromQuiz      = goHomeFromQuiz;
 window.toggleDetail        = toggleDetail;
 window.toggleCompact       = toggleCompact;
 window.copyShareText       = copyShareText;
-window.toggleResultsDetail = toggleResultsDetail;
+window.toggleResultsDetail  = toggleResultsDetail;
+window.toggleAllSpecialties  = toggleAllSpecialties;
+window.toggleAllSp           = toggleAllSp;
+window.toggleCompareSection  = toggleCompareSection;
+window.compareWithSpecialty  = compareWithSpecialty;
 
 // ══════════════════════════════════════════════════════════════════
 //  DEBUG UTILS  (call from browser console)
