@@ -208,20 +208,35 @@ body {
 }
 
 .btn-prev {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 7px 13px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  visibility: visible;
+  white-space: nowrap;
+}
+
+.btn-prev:hover { background: #e5e7eb; border-color: #d1d5db; color: #111827; }
+.btn-prev.invisible { visibility: hidden; pointer-events: none; }
+
+.btn-home-quiz {
+  font-size: 0.78rem;
   font-weight: 600;
-  color: #6b7280;
+  color: #9ca3af;
   background: none;
   border: none;
-  padding: 5px 10px;
+  padding: 5px 8px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
-  visibility: visible;
+  white-space: nowrap;
 }
-
-.btn-prev:hover { background: #f3f4f6; color: #374151; }
-.btn-prev.invisible { visibility: hidden; pointer-events: none; }
+.btn-home-quiz:hover { background: #fef2f2; color: #ef4444; }
 
 .q-counter {
   font-size: 0.82rem;
@@ -262,6 +277,8 @@ body {
   letter-spacing: 0.08em;
   margin-bottom: 12px;
 }
+/* デバッグモード以外では非表示（JS が空文字を設定する） */
+.q-dim-label:empty { display: none; }
 
 .q-text {
   font-size: 1.08rem;

@@ -40,7 +40,7 @@ var FALLBACK_QUESTIONS = [
 
 var FALLBACK_SPECIALTIES = [
   {
-    id:'internal', name:'内科',
+    id:'internal', name:'内科', publicOnly:true,
     emoji:'🩺', color:'#3b82f6', shortType:'思考探求型',
     title:'知の迷宮を歩む深淵の思索者', archetype:'思索探求者',
     relatableTraits:['なんでも「なぜ？」から入る','話すと長くなりがちだが、中身は濃い','知れば知るほど面白くなる','長く付き合うほど信頼される'],
@@ -57,7 +57,7 @@ var FALLBACK_SPECIALTIES = [
     cautions:['不規則な当直や緊急対応が多い科もある','手技を中心に活躍したい人には物足りない場合がある']
   },
   {
-    id:'surgery', name:'外科',
+    id:'surgery', name:'外科', publicOnly:true,
     emoji:'🔪', color:'#ef4444', shortType:'行動突破型',
     title:'修羅場で輝く決断の使い手', archetype:'決断の実行者',
     relatableTraits:['考えるより先に体が動いている','やり切った後の達成感が最高','グダグダした話し合いが苦手','頼まれると断れない'],
@@ -228,18 +228,18 @@ var FALLBACK_SPECIALTIES = [
   },
   {
     id:'ent', name:'耳鼻咽喉科',
-    emoji:'👂', color:'#84cc16', shortType:'バランス万能型',
-    title:'感覚の世界を守るバランスの達人', archetype:'万能のバランサー',
-    relatableTraits:['何でもそこそこできてしまう','仕事もプライベートも同じくらい大事','場の空気を読むのが得意','「そつなくこなす」が最大の褒め言葉'],
-    oneLine:'仕事もプライベートもどちらも大切にできる、バランスの達人タイプ',
-    friendComment:'友達からは「器用だね」「何でもできそう」「そつなくこなす」と思われているかも。',
-    suitableEnv:'専門を深めながら生活も楽しめる職場、メリハリのある環境',
-    typeName:'耳鼻咽喉科・バランスタイプ', catchphrase:'感覚器のスペシャリスト、生活を守る医師',
-    personality:'仕事もプライベートも大切にしたい、バランス感覚に優れた人。専門技術を磨きながら、安定した生活を楽しめます。面倒見が良く気が利くタイプ。',
-    publicDescription:'「何でもそつなくこなせる」バランス型。専門的なスキルを持ちながらも、仕事以外の時間も大切にできるメリハリのある生き方が得意です。',
-    tagline:'感覚器を守り、QOLを高める',
-    desc:'耳・鼻・咽頭・喉頭・頸部の疾患を扱います。内視鏡技術と細かい処置が特徴で、幅広い年齢層に対応します。頭頸部がんも担当します。',
-    weights:{hands_on:3,long_term:3,acute:2,research:2,technical:3,communication:3,visual:3,lifestyle:4,variety:2,precision:4},
+    emoji:'👂', color:'#84cc16', shortType:'精密職人型',
+    title:'感覚の世界を守る精密な職人', archetype:'精密なスペシャリスト',
+    relatableTraits:['細かい作業が好きで集中できる','仕事もプライベートも充実させたい','見えにくい場所を細かく見るのが得意','職人気質で一つのことを極めたい'],
+    oneLine:'精密さと生活の両立を追求する、職人気質のスペシャリストタイプ',
+    friendComment:'友達からは「器用だね」「細かい作業が得意そう」「メリハリある生き方してる」と思われているかも。',
+    suitableEnv:'高度な手技を磨けて、生活の質も守れる職場',
+    typeName:'耳鼻咽喉科・職人タイプ', catchphrase:'感覚器の精密スペシャリスト',
+    personality:'顕微鏡・内視鏡を駆使する精密な手技に喜びを感じ、専門を深めながら生活も充実させたい職人気質の持ち主。',
+    publicDescription:'細かい作業を丁寧に極める職人タイプ。専門的なスキルを磨きながら、オンオフのメリハリも大切にできる人です。',
+    tagline:'感覚器を守り、精密な手技で人々のQOLを守る',
+    desc:'耳・鼻・咽頭・喉頭・頸部の疾患を扱います。顕微鏡・内視鏡を使った精密な処置が特徴で、頭頸部がんや聴覚・嚥下など高度な専門領域を担当します。',
+    weights:{hands_on:4,long_term:2,acute:1,research:2,technical:4,communication:2,visual:4,lifestyle:5,variety:2,precision:5},
     strengths:['内視鏡・顕微鏡を使う精密な手技を習得できる','外来中心で比較的ワークライフバランスを保ちやすい','小児から高齢者まで幅広い年齢層を診る'],
     cautions:['専門領域が限定されるため全身疾患への対応は限られる','繊細な解剖部位のため高い技術が必要']
   },
@@ -278,6 +278,40 @@ var FALLBACK_SPECIALTIES = [
     cautions:['デリケートな部位の疾患のため患者さんへの配慮が必要','腫瘍科としての知識も同時に求められる']
   },
   {
+    id:'researcher', name:'研究医・基礎研究',
+    emoji:'🔬', color:'#059669', shortType:'知識探求型',
+    title:'真実を追い求める孤高の探究者', archetype:'孤高の探究者',
+    relatableTraits:['「なぜ？」の答えが出るまで眠れない','データと向き合う時間が一番好き','論文を読むのが苦にならない','細かいことを見落とさない'],
+    oneLine:'謎を解き明かすことに人生を捧げる、知的探究者タイプ',
+    friendComment:'友達からは「難しそうなことをいつも考えてる」「専門バカ（尊敬の意）」と思われているかも。',
+    suitableEnv:'研究に没頭できる環境、知的自由度の高い職場',
+    typeName:'研究医・探究者タイプ', catchphrase:'謎を解き、医学を前進させる知の探究者',
+    personality:'データと理論を武器に未解決の謎に挑む研究者気質の持ち主。一つのテーマを徹底的に深掘りし、医学の発展につながることに最大の意義を感じます。',
+    publicDescription:'好奇心が止まらない探究者タイプ。一つのことを徹底的に調べ尽くさないと気が済まない性格で、データや論文を読み解くことに喜びを感じます。',
+    tagline:'ベンチから臨床へ、医学の最前線を切り拓く',
+    desc:'基礎研究・臨床研究・トランスレーショナルリサーチなど、医学の知識を生み出す側に立ちます。大学院・研究機関・製薬企業研究部門などが主なフィールドです。',
+    weights:{hands_on:1,long_term:2,acute:1,research:5,technical:4,communication:2,visual:3,lifestyle:2,variety:2,precision:5},
+    strengths:['医学の発展に直接貢献できる','世界初の発見や治療法開発に携われる可能性がある','大学・研究機関・企業など多様なキャリアパスがある'],
+    cautions:['成果が出るまで時間がかかりやすく忍耐が必要','資金・ポストの競争が激しい','臨床スキルが低下しやすい']
+  },
+  {
+    id:'government', name:'医系技官・公衆衛生',
+    emoji:'🏛️', color:'#4f46e5', shortType:'社会設計型',
+    title:'医療制度を動かす社会変革のアーキテクト', archetype:'社会のアーキテクト',
+    relatableTraits:['「制度を変えたい」という気持ちがある','個人より社会全体のことを考えがち','幅広い分野に興味が持てる','人との折衝や調整が苦にならない'],
+    oneLine:'医療制度・政策で社会を変えたい、ビッグピクチャー思考のタイプ',
+    friendComment:'友達からは「スケールでかいな」「先見性がある」「調整上手」と思われているかも。',
+    suitableEnv:'大きな裁量で政策や制度に関われる職場、多様なステークホルダーと協力できる環境',
+    typeName:'医系技官・社会設計タイプ', catchphrase:'医療制度で社会を変える、社会のアーキテクト',
+    personality:'個人の患者ではなく社会全体の健康を考えるビッグピクチャー思考の持ち主。制度・政策・法律という枠組みを通じて、より多くの人に貢献したいという志があります。',
+    publicDescription:'「社会を変えたい」という志を持つ大きな視野の持ち主。幅広い分野に興味を持ち、人々を巻き込んで課題を解決するコーディネーター的な能力があります。',
+    tagline:'医師の知識で、医療制度・社会を動かす',
+    desc:'厚生労働省・都道府県・国際機関などで医療行政・政策立案・公衆衛生に携わります。個別患者ではなく集団・社会を対象に医師の知識を活かします。',
+    weights:{hands_on:1,long_term:3,acute:1,research:4,technical:2,communication:5,visual:1,lifestyle:4,variety:4,precision:4},
+    strengths:['医師の知識を政策・制度に活かして社会に大きなインパクトを与えられる','厚生労働省・WHO・PMDAなど多様なキャリアパスがある','ワークライフバランスが比較的取りやすい'],
+    cautions:['臨床から離れると医師としてのスキルが低下しやすい','政策の成果が見えるまでに時間がかかる','専門性より汎用性が求められる場面が多い']
+  },
+  {
     id:'neurology', name:'神経内科',
     emoji:'💡', color:'#d97706', shortType:'謎解き探偵型',
     title:'神経の謎を解く知的探偵', archetype:'知的な探偵',
@@ -293,6 +327,173 @@ var FALLBACK_SPECIALTIES = [
     weights:{hands_on:1,long_term:4,acute:3,research:5,technical:2,communication:4,visual:2,lifestyle:3,variety:2,precision:3},
     strengths:['緻密な神経学的診察という独自スキルを極められる','難病患者さんへの長期的な関わりで深い信頼関係を築ける','研究と臨床が密接に連携し学術的関心を活かせる'],
     cautions:['根治困難な疾患が多く長期的な精神的負荷がある','手技を中心にしたい人には向かない']
+  },
+
+  // ─── 医学生モード専用（studentOnly）診療科 ───────────────────────
+  {
+    id:'cardiology', name:'循環器内科', studentOnly:true,
+    emoji:'❤️', color:'#dc2626', shortType:'緊急・技術型',
+    title:'心臓の戦場に立つ、緊急と技術の守護者',
+    tagline:'急性心筋梗塞からカテーテル治療まで、テクノロジーと緊急対応の最前線',
+    desc:'心筋梗塞・不整脈・心不全・弁膜症など心臓・血管疾患を内科的に管理し、カテーテル治療（PCI・アブレーション）も行う診療科。救急から集中治療・カテーテル室まで守備範囲が広く、高い技術習得が求められます。',
+    studentDescription:'循環器内科は、心筋梗塞・不整脈・心不全・弁膜症など心臓・血管疾患を内科的に管理し、カテーテル治療（PCI・カテーテルアブレーション）も行う診療科。大学病院では救急からカテーテル室・集中治療まで守備範囲が広く、高い技術習得が求められます。',
+    idealProfile:'急性心筋梗塞や不整脈などの緊急対応に強い関心があり、カテーテルなど高度な技術を習得したい人。画像・数値の読解が得意で、プレッシャー下でも冷静に動けるタイプ。',
+    whyFitExamples:['急性心筋梗塞のカテーテル治療で命を救う瞬間に達成感を感じたい','心電図・心エコー・冠動脈CTなど多様な検査技術を習得したい','内科の中でもアクティブに手技をやりたい'],
+    compatibleSpecialties:['救急科','心臓血管外科'],
+    relatableTraits:['緊急時にスイッチが入るタイプ','ECGを見ると心が躍る','機械・数値・画像を読むのが好き','瞬時の判断を迫られる場面が好き'],
+    weights:{hands_on:4,long_term:3,acute:5,research:4,technical:5,communication:2,visual:4,lifestyle:2,variety:2,precision:4},
+    strengths:['急性心筋梗塞のカテーテル治療（PCI）で命を救える','心エコー・電気生理学など高度な技術習得ができる','内科の中で最も急性期対応が多くやりがいが大きい'],
+    cautions:['オンコール・夜間緊急対応が多くワークライフバランスは厳しい','技術習得のために長期的なトレーニングが必要']
+  },
+  {
+    id:'gi_medicine', name:'消化器内科', studentOnly:true,
+    emoji:'🔭', color:'#ca8a04', shortType:'内視鏡職人型',
+    title:'消化管を制する、内視鏡の職人',
+    tagline:'内視鏡で診断から治療まで、消化器疾患の守護者',
+    desc:'食道・胃・腸・肝臓・胆道・膵臓の疾患を扱います。上部・下部内視鏡検査から治療（ポリペクトミー・ESD・ERCP）など内科の中でも手技色が強い専門分野です。がん・IBD・肝炎・脂肪肝など患者層も幅広いです。',
+    studentDescription:'消化器内科は、食道・胃・腸・肝臓・胆道・膵臓の疾患を扱います。上部・下部内視鏡検査や治療（ポリペクトミー、ESD、ERCP）など、内科の中でも手技色が強い専門分野です。がん・炎症性腸疾患・肝炎・脂肪肝など患者層も幅広いです。',
+    idealProfile:'内視鏡という「手を動かす内科」に惹かれ、肝臓・膵臓・IBDなど多彩な疾患に興味がある人。画像を読むのが好きで、処置の精密さに達成感を感じるタイプ。',
+    whyFitExamples:['内視鏡操作で直接病変を確認・治療することに魅力を感じる','肝臓・膵臓などの複雑な疾患の病態を理解したい','外科のようにがっつり手技をやりながらも内科的思考を活かしたい'],
+    compatibleSpecialties:['消化器外科','放射線科'],
+    relatableTraits:['「内科なのに手を動かしたい」と思う','細い管を操る繊細さに魅力を感じる','肝臓・膵臓の複雑な疾患に知的興奮を感じる','内視鏡を見て「これ自分でやりたい」と思った'],
+    weights:{hands_on:4,long_term:3,acute:3,research:3,technical:4,communication:3,visual:4,lifestyle:3,variety:3,precision:4},
+    strengths:['内視鏡という明確な技術目標があり習熟度が可視化される','肝臓・胆道・膵臓・消化管と幅広い臓器を扱える','消化器がん治療から慢性疾患管理まで多様な経験が積める'],
+    cautions:['内視鏡技術習得に数年かかる','急性期（消化管出血・急性膵炎）のオンコール対応がある']
+  },
+  {
+    id:'pulmonology', name:'呼吸器内科', studentOnly:true,
+    emoji:'🫁', color:'#0ea5e9', shortType:'論理・慢性期型',
+    title:'呼吸の謎を解く、画像と論理の内科医',
+    tagline:'肺がん・COPD・間質性肺疾患をエビデンスと画像で診る内科医',
+    desc:'肺がん・COPD・喘息・間質性肺疾患・肺炎・睡眠時無呼吸など呼吸器疾患全般を担当します。胸部CTの読影・気管支鏡・肺機能検査など画像・技術の比重が高く、感染症・腫瘍・免疫と幅広い内科知識が求められます。',
+    studentDescription:'呼吸器内科は、肺がん・COPD・喘息・間質性肺疾患・肺炎・睡眠時無呼吸など呼吸器疾患全般を担当します。胸部CTの読影・気管支鏡・肺機能検査など画像・技術の比重が高く、感染症・腫瘍・免疫と幅広い内科知識が求められます。',
+    idealProfile:'肺がん・COPD・間質性肺疾患など複雑な慢性疾患の管理に興味があり、胸部CT・気管支鏡・肺機能検査など多彩な検査技術を習得したい人。',
+    whyFitExamples:['胸部CTを読んで診断を組み立てるプロセスが面白い','COPDや間質性肺疾患など慢性疾患の長期管理に携わりたい','気管支鏡など手技もありつつ、内科的思考も活かしたい'],
+    compatibleSpecialties:['呼吸器外科','放射線科'],
+    relatableTraits:['胸部X線やCTを見ると集中できる','「なぜ息が苦しいのか」を系統的に考えるのが好き','慢性疾患を長く支えることに意義を感じる','エビデンスに基づいた治療方針を立てることが好き'],
+    weights:{hands_on:3,long_term:4,acute:3,research:4,technical:3,communication:3,visual:4,lifestyle:3,variety:3,precision:3},
+    strengths:['胸部CT読影という独自スキルを深く磨ける','がん・感染症・免疫疾患と幅広い内科知識が身につく','気管支鏡・胸腔穿刺など手技もある程度経験できる'],
+    cautions:['肺がん・間質性肺疾患など根治困難な疾患が多い','急性呼吸不全・重症肺炎の夜間対応が発生する']
+  },
+  {
+    id:'nephrology', name:'腎臓内科', studentOnly:true,
+    emoji:'🫘', color:'#7c3aed', shortType:'長期・精密型',
+    title:'電解質の番人、患者と歩む精密な内科医',
+    tagline:'慢性腎臓病・透析患者と生涯向き合う、精密な内科専門医',
+    desc:'慢性腎臓病・糸球体腎炎・ネフローゼ症候群・急性腎障害・透析療法などを担当します。腎生検の判読・電解質管理・透析処方など精密な医学知識が求められ、患者との長期的な関わりが大きな特徴です。',
+    studentDescription:'腎臓内科は慢性腎臓病・糸球体腎炎・ネフローゼ症候群・急性腎障害・透析療法などを担当します。腎生検の判読・電解質管理・透析処方など精密な医学知識が求められ、患者との長期的な関わりが大きな特徴です。',
+    idealProfile:'慢性腎臓病・透析患者との長期的な関係を大切にし、電解質バランスや腎疾患の複雑な病態生理を深く理解したい人。精密な数値管理に達成感を感じるタイプ。',
+    whyFitExamples:['透析患者と長年向き合い、生活の質を支えることに意義を感じる','電解質・酸塩基平衡などの複雑な病態生理を理解したい','腎生検の組織所見から診断を組み立てる知的プロセスが楽しい'],
+    compatibleSpecialties:['糖尿病・内分泌内科','循環器内科'],
+    relatableTraits:['数字やデータを見て本質を追うのが好き','長く付き合う患者関係に誇りを感じたい','複雑な病態を体系的に整理することが得意','電解質の異常を見ると「なぜ？」と追いかけてしまう'],
+    weights:{hands_on:2,long_term:5,acute:2,research:4,technical:3,communication:4,visual:2,lifestyle:3,variety:2,precision:4},
+    strengths:['透析患者との深く長い関係構築ができる','電解質・酸塩基など内科の基盤知識を極める','腎生検や透析管理など独自の専門スキルが身につく'],
+    cautions:['透析患者のQOLが限られる場面もあり精神的な重さがある','専門領域が腎・電解質に集中するため汎用性は限られる']
+  },
+  {
+    id:'endocrinology', name:'糖尿病・内分泌内科', studentOnly:true,
+    emoji:'⚖️', color:'#f59e0b', shortType:'長期・教育型',
+    title:'生活を変え、ホルモンを整える教育型内科医',
+    tagline:'患者教育と長期管理で生活習慣ごと支える内科専門医',
+    desc:'糖尿病・甲状腺疾患・副腎疾患・下垂体疾患・骨粗鬆症などを扱います。患者教育・生活習慣指導の比重が高く、内科の中でも「患者との対話」が診療の核心となる科です。',
+    studentDescription:'糖尿病・内分泌内科は、糖尿病・甲状腺疾患・副腎疾患・下垂体疾患・骨粗鬆症などを扱います。患者教育・生活習慣指導の比重が高く、内科の中でも「患者との対話」が診療の核心となる科です。',
+    idealProfile:'患者の生活習慣に深く関わり、長期的に糖尿病・甲状腺・副腎などの疾患を管理したい人。コミュニケーションと患者教育に強みがあり、ホルモンの複雑な調節機序に知的興味を持てる人。',
+    whyFitExamples:['糖尿病患者の生活習慣改善を長期的に支援したい','ホルモンの複雑な調節機序（負のフィードバック）を理解することが面白い','多職種チーム（栄養士・薬剤師）と連携した医療に携わりたい'],
+    compatibleSpecialties:['腎臓内科','循環器内科','小児科'],
+    relatableTraits:['生活習慣の改善アドバイスが好き','患者の長期的な変化を見届けたい','「仕組みってどうなってるの？」とホルモン調節を追いかけてしまう','外来でゆっくり患者と話すことに喜びを感じる'],
+    weights:{hands_on:2,long_term:5,acute:2,research:3,technical:2,communication:5,visual:2,lifestyle:4,variety:3,precision:3},
+    strengths:['外来中心でワークライフバランスが比較的保ちやすい','患者の生活を変えるインパクトを長期的に実感できる','ホルモン疾患の複雑な病態生理を深く理解できる'],
+    cautions:['糖尿病管理は患者の生活習慣に依存するため成果が見えにくい場合がある','急性期の手技志向には物足りない場合がある']
+  },
+  {
+    id:'hematology', name:'血液内科', studentOnly:true,
+    emoji:'🩸', color:'#b91c1c', shortType:'研究・最前線型',
+    title:'血液の最前線を守る、研究と臨床の融合者',
+    tagline:'白血病・リンパ腫など血液がんの最先端治療に挑む内科医',
+    desc:'白血病・悪性リンパ腫・多発性骨髄腫・骨髄異形成症候群・血友病など血液疾患全般を担当します。骨髄移植・CAR-T細胞療法など最先端治療が多く、基礎研究との連携が非常に密接な科です。',
+    studentDescription:'血液内科は、白血病・悪性リンパ腫・多発性骨髄腫・骨髄異形成症候群・血友病など血液疾患全般を担当します。骨髄移植・CAR-T細胞療法など最先端治療が多く、基礎研究との連携が非常に密接な科です。',
+    idealProfile:'白血病・リンパ腫などの血液がんに強い関心があり、CAR-T細胞療法・移植など最先端治療の現場に携わりたい人。研究志向が高く、複雑な免疫・凝固の病態を追うのが好きなタイプ。',
+    whyFitExamples:['骨髄移植・CAR-T療法など最先端がん治療の最前線に立ちたい','血液疾患の複雑な病態（凝固・免疫・造血）を深く理解したい','臨床研究・基礎研究と密接に連携した診療に興味がある'],
+    compatibleSpecialties:['研究医・基礎研究','膠原病・リウマチ内科'],
+    relatableTraits:['血球を見ると原因を追いかけてしまう','最先端医療の話題に自然とアンテナが立つ','基礎研究と臨床の橋渡しに興奮を感じる','患者に正直に向き合い精一杯一緒に戦いたい'],
+    weights:{hands_on:2,long_term:3,acute:3,research:5,technical:3,communication:4,visual:3,lifestyle:2,variety:2,precision:4},
+    strengths:['造血幹細胞移植・CAR-T療法など世界最先端の治療を担当できる','臨床試験・基礎研究との連携が密で研究志向を活かせる','治癒が見込める疾患も多く治療の達成感がある'],
+    cautions:['病状が急変しやすく精神的・体力的な負担が大きい','骨髄移植患者の長期管理は感染管理など高い集中力が求められる']
+  },
+  {
+    id:'rheumatology', name:'膠原病・リウマチ内科', studentOnly:true,
+    emoji:'🔮', color:'#8b5cf6', shortType:'長期・免疫探求型',
+    title:'免疫の謎を解く、自己免疫疾患の専門医',
+    tagline:'RAやSLEなど自己免疫疾患の複雑な謎に挑み、患者と長く向き合う',
+    desc:'関節リウマチ・全身性エリテマトーデス（SLE）・多発性筋炎・血管炎などの自己免疫疾患を担当します。生物学的製剤・JAK阻害薬など新薬の進歩が著しく、免疫学の知識が直接診療に活きる科です。',
+    studentDescription:'膠原病・リウマチ内科は、関節リウマチ・全身性エリテマトーデス（SLE）・多発性筋炎・血管炎などの自己免疫疾患を担当します。生物学的製剤・JAK阻害薬など新薬の進歩が著しく、免疫学の知識が直接診療に活きる科です。',
+    idealProfile:'SLUやRAなどの自己免疫疾患の複雑な病態に知的興味があり、患者と長期的な関係を築きたい人。免疫学・生物学的製剤に強い関心があり、コミュニケーション力の高い人が向いている。',
+    whyFitExamples:['SLEの多彩な臓器症状（関節・腎・皮膚・脳）を系統的に理解したい','RAの生物学的製剤の選択・効果評価など最新の治療戦略を学びたい','慢性疾患の患者と長くつながり生活の質を支えたい'],
+    compatibleSpecialties:['血液内科','腎臓内科','皮膚科'],
+    relatableTraits:['免疫の話になると止まらなくなる','患者の「全身」を丸ごと診たい','長く続く関係に誇りを感じる','生物学的製剤の仕組みに興奮する'],
+    weights:{hands_on:2,long_term:5,acute:2,research:4,technical:2,communication:4,visual:3,lifestyle:4,variety:2,precision:3},
+    strengths:['免疫学の最先端知識を直接臨床に活かせる','外来中心でワークライフバランスが保ちやすい','患者と長期的な信頼関係を構築できる'],
+    cautions:['疾患活動性の評価が難しく治療効果が見えにくい面がある','専門特化した科のため汎用性は限られる']
+  },
+  {
+    id:'gi_surgery', name:'消化器外科', studentOnly:true,
+    emoji:'⚔️', color:'#ef4444', shortType:'手技・高難度型',
+    title:'消化器がんに挑む、高難度手術の外科医',
+    tagline:'胃・腸・肝臓・膵臓など消化器がんを手術で治す外科医',
+    desc:'胃がん・大腸がん・肝細胞がん・膵がん・食道がんなど消化器がんの手術を中心に担当します。腹腔鏡・ロボット支援手術の比率が高まり、技術革新が著しい分野です。周術期管理や化学療法との連携も重要です。',
+    studentDescription:'消化器外科は、胃がん・大腸がん・肝細胞がん・膵がん・食道がんなど消化器がんの手術を中心に担当します。腹腔鏡・ロボット支援手術の比率が高まり、技術革新が著しい分野です。周術期管理や化学療法との連携も重要です。',
+    idealProfile:'手術で患者を治したい強い意志を持ち、腹腔鏡・ロボット手術など最新技術を習得したい人。消化器外科は手術難度・チームワーク・体力の全てが問われる。',
+    whyFitExamples:['膵頭十二指腸切除など高難度手術を習得したい','消化器がんの外科的根治治療で患者に直接貢献したい','腹腔鏡・ロボット手術など最新の技術を習得したい'],
+    compatibleSpecialties:['消化器内科','呼吸器外科'],
+    relatableTraits:['長時間の手術も苦にならない体力と集中力がある','腹腔鏡の細かい操作に達成感を感じる','チームリーダーとして手術室をまとめたい','がんに外科的に挑む使命感がある'],
+    weights:{hands_on:5,long_term:2,acute:3,research:3,technical:4,communication:2,visual:3,lifestyle:1,variety:3,precision:4},
+    strengths:['腹腔鏡・ロボットなど先進外科技術を習得できる','消化器がん治療のチームの中核を担える','多様な臓器（胃・腸・肝・膵）を扱い幅広い外科経験が積める'],
+    cautions:['拘束時間が長くワークライフバランスは厳しい','消化器がんの予後が厳しく精神的負担もある']
+  },
+  {
+    id:'cardiac_surgery', name:'心臓血管外科', studentOnly:true,
+    emoji:'💓', color:'#be123c', shortType:'最高難度型',
+    title:'人体最難の戦場に立つ、心臓外科の頂点',
+    tagline:'CABG・弁置換・大動脈手術など、命の中心に触れる最高峰の外科',
+    desc:'冠動脈バイパス手術・弁形成/置換術・大動脈手術・先天性心疾患手術を担当します。人工心肺を使った心臓手術はリスクが高く技術的難度も極めて高いですが、患者に与えるインパクトは最大です。',
+    studentDescription:'心臓血管外科は、冠動脈バイパス手術・弁形成/置換術・大動脈手術・先天性心疾患手術を担当します。人工心肺を使った心臓手術はリスクが高く技術的難度も極めて高いですが、患者に与えるインパクトは最大です。',
+    idealProfile:'手術による達成感を最大限に求め、体力・精神力・技術力の全てを極限まで高めたい人。心臓血管外科はこれを実現できる最高峰の外科の一つだが、生活の犠牲も最大級。',
+    whyFitExamples:['心臓に直接触れて命を救う、最高峰の外科を目指している','大動脈解離など超緊急手術で活躍したい','技術と体力と精神力を最大限に使いたい'],
+    compatibleSpecialties:['循環器内科','麻酔科'],
+    relatableTraits:['「心臓を触る」という響きに特別な使命感を感じる','限界に挑戦することに喜びを感じる','体力・精神力には絶対的な自信がある','修羅場ほど集中できる'],
+    weights:{hands_on:5,long_term:2,acute:4,research:3,technical:5,communication:2,visual:4,lifestyle:1,variety:1,precision:5},
+    strengths:['心臓手術という最高峰の外科技術を習得できる','命に直接関わる使命感と達成感が際立つ','人工心肺・補助循環など最先端技術を駆使できる'],
+    cautions:['勤務時間・拘束時間が外科系で最も長い分野の一つ','一つのミスが生死に直結するプレッシャーが常にある']
+  },
+  {
+    id:'thoracic_surgery', name:'呼吸器外科', studentOnly:true,
+    emoji:'🫁', color:'#0369a1', shortType:'手技・精密型',
+    title:'胸腔鏡で肺を守る、低侵襲外科の職人',
+    tagline:'肺がん・縦隔腫瘍を胸腔鏡（VATS）で切除する精密外科医',
+    desc:'肺がん・気胸・縦隔腫瘍・胸膜疾患などを担当します。VATS（胸腔鏡手術）・ロボット支援手術が標準化しており、低侵襲外科技術の習得がキャリアの中心です。呼吸器内科・放射線科との連携が密です。',
+    studentDescription:'呼吸器外科は、肺がん・気胸・縦隔腫瘍・胸膜疾患などを担当します。VATS（胸腔鏡手術）・ロボット支援手術が標準化しており、低侵襲外科技術の習得がキャリアの中心です。呼吸器内科・放射線科との連携が密です。',
+    idealProfile:'肺がんや気胸・縦隔腫瘍の外科的治療に興味があり、胸腔鏡（VATS）・ロボット手術など低侵襲外科を習得したい人。精密さへのこだわりと呼吸器疾患への関心を兼ね備えているタイプ。',
+    whyFitExamples:['胸腔鏡による低侵襲肺切除手術を習得したい','肺がん手術という直接的な治療介入で患者に貢献したい','低侵襲外科で技術を磨きながら呼吸器疾患全般を理解したい'],
+    compatibleSpecialties:['呼吸器内科','放射線科'],
+    relatableTraits:['精密な作業ほど集中できる','胸部CTを見て「ここを切りたい」と思う','低侵襲手術の精密さに職人魂を感じる','肺がんと外科的に闘いたい'],
+    weights:{hands_on:4,long_term:2,acute:3,research:3,technical:4,communication:2,visual:3,lifestyle:2,variety:2,precision:4},
+    strengths:['VATS・ロボット手術など低侵襲外科技術の最先端を学べる','肺がん外科という明確な専門目標を持てる','消化器外科より術後管理が比較的シンプル'],
+    cautions:['専門領域が胸部に限定されるため他科との横断的経験は少ない','手術件数が消化器外科より少ない施設もある']
+  },
+  {
+    id:'plastics', name:'形成外科', studentOnly:true,
+    emoji:'✂️', color:'#db2777', shortType:'美と再建の職人型',
+    title:'形を整え、人生を変える精密再建の外科医',
+    tagline:'先天異常・熱傷・がん術後の再建からマイクロサージャリーまで',
+    desc:'先天性奇形・熱傷・外傷・がん切除後の再建・顔面骨骨折・美容外科を担当します。マイクロサージャリー（顕微鏡下手術）・皮弁術など高度な技術が必要で、患者の外見と機能の両方を回復させることが目標です。',
+    studentDescription:'形成外科は、先天性奇形・熱傷・外傷・がん切除後の再建・顔面骨骨折・美容外科を担当します。マイクロサージャリー（顕微鏡下手術）・皮弁術など高度な技術が必要で、患者の外見と機能の両方を回復させることが目標です。',
+    idealProfile:'手術による外見的・機能的な回復に強い関心があり、美的センスと高い精密性を持つ人。熱傷・先天異常・がん切除後の再建から美容まで、幅広い手術技術を習得したい外科系志望者。',
+    whyFitExamples:['手術で患者の外見と機能を回復させ、人生を変えたい','乳房再建・顔面再建など繊細なマイクロサージャリーを習得したい','審美的センスと外科技術の両方を活かしたい'],
+    compatibleSpecialties:['皮膚科','耳鼻咽喉科'],
+    relatableTraits:['「美しい」手術跡に芸術的な達成感を感じる','顕微鏡下の精密作業に集中できる','ミリ単位のデザインにこだわる完璧主義','がん術後の患者の表情が変わる瞬間に喜びを感じる'],
+    weights:{hands_on:5,long_term:2,acute:2,research:2,technical:3,communication:3,visual:5,lifestyle:4,variety:3,precision:5},
+    strengths:['マイクロサージャリーなど超高度の精密技術を習得できる','再建・外傷・先天異常・美容と幅広い患者層を扱える','美容医療の需要増で将来のキャリアオプションが広い'],
+    cautions:['審美的な評価は主観的で患者満足度の管理が難しい','美容外科では患者の要求水準が高くトラブルリスクもある']
   }
 ];
 
@@ -306,6 +507,7 @@ var mode             = 'student'; // 'student' | 'public'
 var currentIndex     = 0;
 var answers          = {};        // { qid: 1-5 }
 var currentShareText = '';        // for copy button
+var _answerTimer     = null;      // debounce: cancel pending navigation on back/home
 
 // ══════════════════════════════════════════════════════════════════
 //  DATA LOADING  (fetch → fallback)
@@ -339,7 +541,14 @@ function showScreen(id) {
 //  MODE SELECTION
 // ══════════════════════════════════════════════════════════════════
 
-function selectMode(m) { mode = m; startQuiz(); }
+function selectMode(m) {
+  mode = m;
+  document.querySelectorAll('.scale-btn').forEach(function(b) {
+    b.classList.remove('selected', 'flash');
+    b.disabled = false;
+  });
+  startQuiz();
+}
 function goTop()        { showScreen('welcome'); }
 
 // ══════════════════════════════════════════════════════════════════
@@ -398,9 +607,16 @@ function renderQuestion() {
     phaseEl.textContent = msgs[msgIdx];
   }
 
-  // Dim label & question text
-  document.getElementById('q-dim-label').textContent =
-    isPublic && q.dimLabelPublic ? q.dimLabelPublic : q.dimLabel;
+  // Dim label — hidden in production; set window.DEBUG_QUIZ = true in console to reveal
+  var dimLabelEl = document.getElementById('q-dim-label');
+  if (dimLabelEl) {
+    dimLabelEl.textContent = window.DEBUG_QUIZ
+      ? (isPublic && q.dimLabelPublic ? q.dimLabelPublic : q.dimLabel)
+      : '';
+    dimLabelEl.setAttribute('data-dim', q.dim); // always available for DevTools inspection
+  }
+
+  // Question text
   document.getElementById('q-text').textContent =
     isPublic && q.textPublic ? q.textPublic : q.text;
 
@@ -438,7 +654,9 @@ function answer(value) {
     }
   });
 
-  setTimeout(function() {
+  if (_answerTimer) clearTimeout(_answerTimer);
+  _answerTimer = setTimeout(function() {
+    _answerTimer = null;
     if (currentIndex < QUESTIONS.length - 1) {
       currentIndex++;
       renderQuestion();
@@ -451,7 +669,19 @@ function answer(value) {
 }
 
 function prevQuestion() {
+  if (_answerTimer) { clearTimeout(_answerTimer); _answerTimer = null; }
   if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+}
+
+function goHomeFromQuiz() {
+  var hasAnswers = Object.keys(answers).length > 0;
+  if (hasAnswers) {
+    if (!confirm('回答途中です。ホームに戻ると現在の回答は破棄されます。よろしいですか？')) return;
+  }
+  if (_answerTimer) { clearTimeout(_answerTimer); _answerTimer = null; }
+  answers = {};
+  currentIndex = 0;
+  goTop();
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -463,10 +693,18 @@ function prevQuestion() {
  * Pure computation; no DOM access.
  * @returns {Array} [{ sp, pct, dimScore, dist }] sorted best-first
  */
+function getSpecialtiesForMode(m) {
+  return SPECIALTIES.filter(function(sp) {
+    if (m === 'student') return !sp.publicOnly;
+    if (m === 'public')  return !sp.studentOnly;
+    return true;
+  });
+}
+
 function calcScores() {
   var normAnswers = Scoring.normalizeAnswers(answers, QUESTIONS);
   var dimScores   = Scoring.calculateDimensionScores(normAnswers, QUESTIONS);
-  return Scoring.calculateSpecialtyMatches(dimScores, SPECIALTIES);
+  return Scoring.calculateSpecialtyMatches(dimScores, getSpecialtiesForMode(mode));
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -806,7 +1044,7 @@ function buildHeroCard(item, rank, isPublic) {
   var studentDetailInner =
     '<div class="detail-section">' +
       '<div class="detail-section-title">📋 この診療科の特徴</div>' +
-      '<p class="pers-detail-text">' + esc(sp.personality || sp.desc) + '</p>' +
+      '<p class="pers-detail-text">' + esc(sp.studentDescription || sp.personality || sp.desc) + '</p>' +
     '</div>' +
     '<div class="detail-section"><div class="detail-section-title title-strength">この診療科の魅力</div><div class="tag-list">' + strengthTags + '</div></div>' +
     '<div class="detail-section"><div class="detail-section-title title-caution">注意しておきたい点</div><div class="tag-list">' + cautionTags + '</div></div>';
@@ -845,7 +1083,9 @@ function buildCompactCard(item, rank, isPublic) {
   var uid      = sp.id;
 
   var displayName  = isPublic && sp.typeName ? sp.typeName : sp.name;
-  var descText     = isPublic && sp.publicDescription ? sp.publicDescription : sp.desc;
+  var descText     = isPublic && sp.publicDescription
+    ? sp.publicDescription
+    : (sp.studentDescription || sp.desc);
   var strengthTags = sp.strengths.map(function(s) { return '<span class="tag tag-strength">' + esc(s) + '</span>'; }).join('');
   var cautionTags  = sp.cautions.map(function(c) { return '<span class="tag tag-caution">' + esc(c) + '</span>'; }).join('');
 
@@ -1024,10 +1264,71 @@ window.startQuiz           = startQuiz;
 window.answer              = answer;
 window.prevQuestion        = prevQuestion;
 window.goTop               = goTop;
+window.goHomeFromQuiz      = goHomeFromQuiz;
 window.toggleDetail        = toggleDetail;
 window.toggleCompact       = toggleCompact;
 window.copyShareText       = copyShareText;
 window.toggleResultsDetail = toggleResultsDetail;
+
+// ══════════════════════════════════════════════════════════════════
+//  DEBUG UTILS  (call from browser console)
+// ══════════════════════════════════════════════════════════════════
+
+/**
+ * Verify scoring results for 5 canonical answer patterns.
+ * Usage: open DevTools → runScoringTests()
+ *
+ * Question order (by dimension, 3 questions each):
+ *   indices 0-2:   hands_on
+ *   indices 3-5:   long_term
+ *   indices 6-8:   acute
+ *   indices 9-11:  research
+ *   indices 12-14: technical
+ *   indices 15-17: communication
+ *   indices 18-20: visual
+ *   indices 21-23: lifestyle
+ *   indices 24-26: variety
+ *   indices 27-29: precision
+ */
+function runScoringTests() {
+  function makeAnswers(vals) {
+    var ans = {};
+    FALLBACK_QUESTIONS.forEach(function(q, i) { ans[q.id] = vals[i] || 3; });
+    return ans;
+  }
+  function fill(base, overrides) {
+    var v = Array(30).fill(base);
+    Object.keys(overrides).forEach(function(range) {
+      var parts = range.split('-').map(Number);
+      var start = parts[0], end = parts[1] != null ? parts[1] : parts[0];
+      for (var i = start; i <= end; i++) v[i] = overrides[range];
+    });
+    return v;
+  }
+
+  var scenarios = [
+    { name: 'all-3（平均的）',          vals: Array(30).fill(3) },
+    { name: '研究志向（research↑ hands/acute↓）', vals: fill(3, {'9-11':5, '0-2':1, '6-8':1, '27-29':5}) },
+    { name: '公衆衛生/制度志向（comm↑ variety↑ hands/acute/visual↓）', vals: fill(3, {'15-17':5, '24-26':5, '21-23':4, '9-11':4, '0-2':1, '6-8':1, '18-20':1}) },
+    { name: '手技志向（hands↑ precision↑ research↓）', vals: fill(3, {'0-2':5, '27-29':5, '9-11':1}) },
+    { name: '急性期志向（acute↑ variety↑ longterm/lifestyle↓）', vals: fill(3, {'6-8':5, '24-26':5, '0-2':4, '3-5':1, '21-23':1}) }
+  ];
+
+  console.group('%c[診療科マッチング] スコアリング検証', 'color:#3b82f6;font-weight:bold');
+  scenarios.forEach(function(s) {
+    var ans      = makeAnswers(s.vals);
+    var norm     = Scoring.normalizeAnswers(ans, FALLBACK_QUESTIONS);
+    var dims     = Scoring.calculateDimensionScores(norm, FALLBACK_QUESTIONS);
+    var ranked   = Scoring.calculateSpecialtyMatches(dims, getSpecialtiesForMode('student'));
+    console.group(s.name);
+    ranked.slice(0, 5).forEach(function(r, i) {
+      console.log((i + 1) + '位: ' + r.sp.name + '（' + r.pct + '%）');
+    });
+    console.groupEnd();
+  });
+  console.groupEnd();
+}
+window.runScoringTests = runScoringTests;
 
 // ══════════════════════════════════════════════════════════════════
 //  BOOT
