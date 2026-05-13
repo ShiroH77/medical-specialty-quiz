@@ -1576,3 +1576,74 @@ body {
 .compare-sum-gap::before      { content: '△'; color: #dc2626; }
 .compare-sum-strength::before { content: '★'; color: #16a34a; }
 .compare-sum-close::before    { content: '✓'; color: #3b82f6; }
+
+/* ── related specialties tag ── */
+.tag-related { background: #ede9fe; color: #6d28d9; }
+
+.hero-related {
+  margin: 10px 0 6px;
+}
+.hero-related-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6d28d9;
+  margin-bottom: 5px;
+}
+
+/* ══════════════════════════════
+   SPECIALTY MAP
+══════════════════════════════ */
+.sp-map-section {
+  margin: 10px 0 6px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 14px 10px;
+}
+
+.sp-map-header {
+  margin-bottom: 6px;
+}
+.sp-map-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 2px;
+}
+.sp-map-sub {
+  font-size: 0.73rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.sp-map-svg {
+  width: 100%;
+  display: block;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.sp-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 8px;
+}
+.sp-map-leg {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+.sp-map-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.sp-map-dot-sm {
+  width: 7px;
+  height: 7px;
+}

@@ -6,36 +6,96 @@
 // ══════════════════════════════════════════════════════════════════
 
 var FALLBACK_QUESTIONS = [
-  { id: 1,  dim:'hands_on',      dimLabel:'手技・手術',        dimLabelPublic:'実践力・手先タイプ',    text:'手術や処置で患者さんを直接治せる手応えに、強く惹かれる',                             textPublic:'何かを自分の手で作り上げた瞬間の達成感が、たまらなく好きだ' },
-  { id: 2,  dim:'hands_on',      dimLabel:'手技・手術',        dimLabelPublic:'実践力・手先タイプ',    text:'細かな作業や精密な手の動作が得意で、むしろ没頭してしまう',                           textPublic:'細かい作業ほど集中できる。手先の器用さには自信がある' },
-  { id: 3,  dim:'hands_on',      dimLabel:'手技・手術',        dimLabelPublic:'実践力・手先タイプ',    text:'新しい手技や医療デバイスは、自分から率先して習得したいと思う',                         textPublic:'新しい道具やアプリの使い方を、人より早く覚える方だ' },
-  { id: 4,  dim:'long_term',     dimLabel:'長期的な関わり',    dimLabelPublic:'長くつながるタイプ',    text:'患者さんと長年にわたって継続的な関係を築くことに喜びを感じる',                         textPublic:'浅く広くより、少数でも深くつながる関係の方が好きだ' },
-  { id: 5,  dim:'long_term',     dimLabel:'長期的な関わり',    dimLabelPublic:'長くつながるタイプ',    text:'慢性疾患の管理や生活習慣の改善指導に、意義を感じて取り組める',                         textPublic:'「その人をよく知った上で」アドバイスしたい、と思う' },
-  { id: 6,  dim:'long_term',     dimLabel:'長期的な関わり',    dimLabelPublic:'長くつながるタイプ',    text:'患者さんのライフステージ全体に寄り添う医療を実現したい',                               textPublic:'長年支え合える、深いつながりに憧れる' },
-  { id: 7,  dim:'acute',         dimLabel:'急性期・救急',      dimLabelPublic:'瞬発力・アドレナリン',  text:'急変対応の練習や緊急シミュレーションで、周囲が焦っていても自分は落ち着いて動ける方だ',   textPublic:'緊急事態でも、意外と頭が冷静になる方だ' },
-  { id: 8,  dim:'acute',         dimLabel:'急性期・救急',      dimLabelPublic:'瞬発力・アドレナリン',  text:'深夜や休日の緊急呼び出しも、仕事の醍醐味として受け止められる',                         textPublic:'予定が突然変わっても、「なんとかなるか」と思える' },
-  { id: 9,  dim:'acute',         dimLabel:'急性期・救急',      dimLabelPublic:'瞬発力・アドレナリン',  text:'OSCEや実技試験など評価される場面になると、むしろスイッチが入って集中できる',           textPublic:'大事な場面ほど、なぜかスイッチが入る感覚がある' },
-  { id: 10, dim:'research',      dimLabel:'研究・学術思考',    dimLabelPublic:'知的好奇心・探求派',    text:'疾患の病態生理や最新の研究に、自然と強い好奇心が向く',                                 textPublic:'「仕組みってどうなってるんだろう」と、つい深掘りしてしまう' },
-  { id: 11, dim:'research',      dimLabel:'研究・学術思考',    dimLabelPublic:'知的好奇心・探求派',    text:'データを分析し、論文や学会発表にまとめることに充実感を覚える',                           textPublic:'数字やデータの中に法則を見つけると、テンションが上がる' },
-  { id: 12, dim:'research',      dimLabel:'研究・学術思考',    dimLabelPublic:'知的好奇心・探求派',    text:'エビデンスを批判的に評価し、診療に応用する思考プロセスが楽しい',                         textPublic:'新しい研究や発見のニュースに、自然と目がいく' },
-  { id: 13, dim:'technical',     dimLabel:'医療機器・技術',    dimLabelPublic:'テクノロジー好き',      text:'超音波・カテーテル・内視鏡など、医療機器の操作技術を身につけたい',                       textPublic:'最新ガジェットや機能は、とりあえず試してみたくなる' },
-  { id: 14, dim:'technical',     dimLabel:'医療機器・技術',    dimLabelPublic:'テクノロジー好き',      text:'画像や数値データを解析して診断に結びつけることが、自分に向いていると感じる',             textPublic:'グラフや数字を見ると、全体像がすっと頭に入ってくる' },
-  { id: 15, dim:'technical',     dimLabel:'医療機器・技術',    dimLabelPublic:'テクノロジー好き',      text:'技術の進歩に合わせてスキルを更新し続けることを楽しめる',                               textPublic:'技術の進化についていくことに、ワクワク感を感じる' },
-  { id: 16, dim:'communication', dimLabel:'コミュニケーション', dimLabelPublic:'共感・聴き上手',       text:'患者さんの話を傾聴し、感情や生活背景まで理解しようとする',                             textPublic:'話を聴くとき、言葉の裏にある気持ちまで感じ取ろうとしている' },
-  { id: 17, dim:'communication', dimLabel:'コミュニケーション', dimLabelPublic:'共感・聴き上手',       text:'患者さんや家族の精神的なサポートに積極的に関わりたい',                                 textPublic:'落ち込んでいる人を見ると、そばにいてあげたいと感じる' },
-  { id: 18, dim:'communication', dimLabel:'コミュニケーション', dimLabelPublic:'共感・聴き上手',       text:'多職種チームの中でうまくコミュニケーションを取ることが得意だ',                           textPublic:'チームで動く方が、一人より力が出ると感じる' },
-  { id: 19, dim:'visual',        dimLabel:'視覚的診断',        dimLabelPublic:'観察眼・ビジュアル派',  text:'CTやMRIなどの画像を読むことに強い興味と適性を感じる',                                   textPublic:'写真や絵を見ると、細かな違いや変化にすぐ気づく方だ' },
-  { id: 20, dim:'visual',        dimLabel:'視覚的診断',        dimLabelPublic:'観察眼・ビジュアル派',  text:'皮膚や眼など、目に見える所見から診断する作業が好きだ',                                   textPublic:'見た目や雰囲気から、直感的に「なんか変」と察知できる' },
-  { id: 21, dim:'visual',        dimLabel:'視覚的診断',        dimLabelPublic:'観察眼・ビジュアル派',  text:'解剖学的な空間認識や立体的なイメージをつかむことが得意だ',                               textPublic:'地図や立体的なものを見ると、頭の中で空間がすっと広がる' },
-  { id: 22, dim:'lifestyle',     dimLabel:'ライフスタイル',    dimLabelPublic:'オフ重視・メリハリ派',  text:'規則的な勤務時間と確実な休日の確保を、強く重視している',                               textPublic:'オフの時間は、しっかり自分や大切な人のために使いたい' },
-  { id: 23, dim:'lifestyle',     dimLabel:'ライフスタイル',    dimLabelPublic:'オフ重視・メリハリ派',  text:'医師の仕事以外にも、大切にしたい趣味や家族との時間がある',                             textPublic:'仕事だけじゃない。趣味や大切な人との時間も同じくらい大事' },
-  { id: 24, dim:'lifestyle',     dimLabel:'ライフスタイル',    dimLabelPublic:'オフ重視・メリハリ派',  text:'長時間労働が常態化している環境は、できれば避けたい',                                   textPublic:'仕事のオンオフをはっきりさせて、充実した毎日を送りたい' },
-  { id: 25, dim:'variety',       dimLabel:'多様な経験',        dimLabelPublic:'変化・刺激好き',        text:'毎日異なる症例・患者さんと出会えることに、強い刺激を感じる',                           textPublic:'毎日同じことの繰り返しより、新しい出来事があった方が好きだ' },
-  { id: 26, dim:'variety',       dimLabel:'多様な経験',        dimLabelPublic:'変化・刺激好き',        text:'幅広い疾患・年齢層を扱い、多様な経験を積むことを重視する',                             textPublic:'一つのことを深めるより、いろんな分野を幅広く知っていたい' },
-  { id: 27, dim:'variety',       dimLabel:'多様な経験',        dimLabelPublic:'変化・刺激好き',        text:'実習中に担当患者が急に変わったり予定が変更されても、混乱せず対処できる方だ',           textPublic:'「想定外」の状況でも、意外と冷静に対処できる方だ' },
-  { id: 28, dim:'precision',     dimLabel:'精密さ・正確性',    dimLabelPublic:'几帳面・完璧主義',      text:'細部まで確認し、ミスを徹底的に防ぐことへの意識が高い',                                 textPublic:'細かいことが気になる。「ちゃんと確認しないと」タイプだ' },
-  { id: 29, dim:'precision',     dimLabel:'精密さ・正確性',    dimLabelPublic:'几帳面・完璧主義',      text:'標準化された手順やプロトコルを大切にして、確実に仕事を進める',                           textPublic:'計画通りに進めることで、力を最大限に発揮できる' },
-  { id: 30, dim:'precision',     dimLabel:'精密さ・正確性',    dimLabelPublic:'几帳面・完璧主義',      text:'縫合や採血の練習で疲れてきても、確認を省かず最後まで丁寧にやり切れる',               textPublic:'「ここぞ」という場面でも、焦らず丁寧にやり切れる' }
+  { id: 1,  dim:'hands_on',      dimLabel:'手技・手術',        dimLabelPublic:'実践力・手先タイプ',
+    text:'「患者さんを自分の手で直接治す」体験に、強い魅力を感じる',
+    textPublic:'手を動かして形にする作業――工作・料理・楽器など――が心から好きだ' },
+  { id: 2,  dim:'long_term',     dimLabel:'長期的な関わり',    dimLabelPublic:'長くつながるタイプ',
+    text:'患者さんと長年にわたって信頼関係を積み上げる医療に、強い意義を感じる',
+    textPublic:'一度つながった人とは、長く深くつき合っていきたいと思う' },
+  { id: 3,  dim:'acute',         dimLabel:'急性期・救急',      dimLabelPublic:'瞬発力・アドレナリン',
+    text:'緊急シミュレーションや急変対応の場面で、周りが焦っても自分は落ち着いて動けるタイプだ',
+    textPublic:'緊急事態でも、意外と冷静に「次に何をすべきか」を考えられる' },
+  { id: 4,  dim:'research',      dimLabel:'研究・学術思考',    dimLabelPublic:'知的好奇心・探求派',
+    text:'疾患の病態生理や未解明の謎に、自然と強い好奇心が湧く',
+    textPublic:'「なぜそうなるの？」という疑問を、徹底的に追いかけてしまうことがある' },
+  { id: 5,  dim:'technical',     dimLabel:'医療機器・技術',    dimLabelPublic:'テクノロジー好き',
+    text:'超音波・内視鏡・カテーテルなど、医療機器を自在に使いこなすスキルを身につけたい',
+    textPublic:'最新のガジェットや道具は、とりあえず触って試してみたくなる' },
+  { id: 6,  dim:'communication', dimLabel:'コミュニケーション', dimLabelPublic:'共感・聴き上手',
+    text:'患者さんの話を傾聴し、言葉の裏にある気持ちや生活背景まで理解しようとするのが自然にできる',
+    textPublic:'相手の話を聴くとき、言葉より「その裏の感情」を感じ取ろうとしている' },
+  { id: 7,  dim:'visual',        dimLabel:'視覚的診断',        dimLabelPublic:'観察眼・ビジュアル派',
+    text:'CTやMRIの画像から情報を読み取る作業に、強い興味と適性を感じる',
+    textPublic:'写真や図を見ると、細かな違いや異変にすぐ気づく方だ' },
+  { id: 8,  dim:'lifestyle',     dimLabel:'ライフスタイル',    dimLabelPublic:'オフ重視・メリハリ派',
+    text:'規則的な勤務時間と確実な休日は、診療科を選ぶ上で重要な条件のひとつだ',
+    textPublic:'オフの時間はしっかり自分や大切な人のために使いたいという思いが強い' },
+  { id: 9,  dim:'variety',       dimLabel:'多様な経験',        dimLabelPublic:'変化・刺激好き',
+    text:'毎日異なる疾患・患者さんと向き合い、常に新鮮な驚きがある環境に魅力を感じる',
+    textPublic:'毎日同じことより、新しい出来事や人との出会いがある方が好きだ' },
+  { id: 10, dim:'precision',     dimLabel:'精密さ・正確性',    dimLabelPublic:'几帳面・完璧主義',
+    text:'細部までしっかり確認し、ミスをゼロに近づけることへの意識が高い',
+    textPublic:'「ちゃんと確認しないと気が済まない」というこだわりがある' },
+  { id: 11, dim:'research',      dimLabel:'研究・学術思考',    dimLabelPublic:'知的好奇心・探求派',
+    text:'データを集めて分析し、論文や学会発表の形にまとめることに充実感を覚える',
+    textPublic:'数字やデータの中にパターンを見つけると、テンションが上がる' },
+  { id: 12, dim:'hands_on',      dimLabel:'手技・手術',        dimLabelPublic:'実践力・手先タイプ',
+    text:'解剖実習や縫合練習など、手を動かすトレーニングは苦にならず、むしろ集中できる',
+    textPublic:'「うまくできた！」と手応えを感じた瞬間の達成感が、何よりの報酬だ' },
+  { id: 13, dim:'lifestyle',     dimLabel:'ライフスタイル',    dimLabelPublic:'オフ重視・メリハリ派',
+    text:'医師としての責任を果たしながらも、趣味・家族・健康にしっかり投資したい',
+    textPublic:'仕事だけでなく、プライベートの充実も同じくらい大事にしたい' },
+  { id: 14, dim:'communication', dimLabel:'コミュニケーション', dimLabelPublic:'共感・聴き上手',
+    text:'患者さんや家族が不安を抱えているとき、そこに積極的に寄り添いたいと思う',
+    textPublic:'落ち込んでいる人を見ると、そっと声をかけずにはいられない' },
+  { id: 15, dim:'acute',         dimLabel:'急性期・救急',      dimLabelPublic:'瞬発力・アドレナリン',
+    text:'判断を秒単位で迫られるような状況に、むしろアドレナリンが出てスイッチが入る',
+    textPublic:'大事な場面ほどなぜか頭が澄んで、本来の力以上が出ることがある' },
+  { id: 16, dim:'variety',       dimLabel:'多様な経験',        dimLabelPublic:'変化・刺激好き',
+    text:'一つの専門に深く特化するより、幅広い疾患・年齢層・領域を横断的に経験したい',
+    textPublic:'「いろんな分野を少しずつ知っている」状態が、自分には心地よい' },
+  { id: 17, dim:'technical',     dimLabel:'医療機器・技術',    dimLabelPublic:'テクノロジー好き',
+    text:'技術は日々進歩するものとして、新しいスキルを積極的に習得し続けることを楽しめると思う',
+    textPublic:'技術の進化や新しいシステムについていくことに、ワクワク感を覚える' },
+  { id: 18, dim:'long_term',     dimLabel:'長期的な関わり',    dimLabelPublic:'長くつながるタイプ',
+    text:'慢性疾患の患者さんに、生活全般から長期で関わるイメージが描けてわくわくする',
+    textPublic:'人の変化や成長を、時間をかけて見守ることが好きだ' },
+  { id: 19, dim:'precision',     dimLabel:'精密さ・正確性',    dimLabelPublic:'几帳面・完璧主義',
+    text:'標準的な手順やプロトコルを大切にして、着実に仕事を積み上げることが得意だ',
+    textPublic:'計画通りに着実に進めることで、自分の力が最大限に発揮されると感じる' },
+  { id: 20, dim:'visual',        dimLabel:'視覚的診断',        dimLabelPublic:'観察眼・ビジュアル派',
+    text:'皮膚・眼底・内視鏡画像など、「目に見える所見」から診断する分野に惹かれる',
+    textPublic:'「なんとなく変」という視覚的な直感が、よく当たる方だと思う' },
+  { id: 21, dim:'variety',       dimLabel:'多様な経験',        dimLabelPublic:'変化・刺激好き',
+    text:'実習中に担当患者や予定が急に変わっても、柔軟に対応できるタイプだと思う',
+    textPublic:'想定外のことが起きても「とりあえずやってみよう」と動けるタイプだ' },
+  { id: 22, dim:'precision',     dimLabel:'精密さ・正確性',    dimLabelPublic:'几帳面・完璧主義',
+    text:'疲れていても「最後の確認だけは省いてはいけない」という感覚で仕事に向き合える',
+    textPublic:'「ここぞ」という場面では、どんなに疲れていても丁寧にやり切れる' },
+  { id: 23, dim:'communication', dimLabel:'コミュニケーション', dimLabelPublic:'共感・聴き上手',
+    text:'他職種（看護師・薬剤師・SW）と連携して患者さんをチームで支える医療がイメージに合う',
+    textPublic:'「自分一人より、チームで動く方が力が出る」と感じることが多い' },
+  { id: 24, dim:'long_term',     dimLabel:'長期的な関わり',    dimLabelPublic:'長くつながるタイプ',
+    text:'外来で少しずつ良くなっていく患者さんを長期にわたって見届けることに喜びを感じると思う',
+    textPublic:'「あの人に会いに行こう」と思える関係が、仕事の原動力になると思う' },
+  { id: 25, dim:'hands_on',      dimLabel:'手技・手術',        dimLabelPublic:'実践力・手先タイプ',
+    text:'将来は手術や処置が診療の中心にある仕事をしたいと思っている',
+    textPublic:'コツコツ練習して技を磨いていく過程に、喜びを感じる' },
+  { id: 26, dim:'lifestyle',     dimLabel:'ライフスタイル',    dimLabelPublic:'オフ重視・メリハリ派',
+    text:'「良い医師であるために、まず自分自身を大切にする」という生き方に共感する',
+    textPublic:'「休むことも仕事のうち」という考え方に、自然と共感できる' },
+  { id: 27, dim:'acute',         dimLabel:'急性期・救急',      dimLabelPublic:'瞬発力・アドレナリン',
+    text:'夜間・休日の緊急対応を「医師ならではの緊張感」として、ある程度ポジティブに受け止められる',
+    textPublic:'予定が急に変わっても「まあなんとかなる」と思えるフレキシブルさがある' },
+  { id: 28, dim:'technical',     dimLabel:'医療機器・技術',    dimLabelPublic:'テクノロジー好き',
+    text:'画像・波形・数値など、機器が示すデータを読み解いて診断に結びつける作業が得意だと感じる',
+    textPublic:'グラフや数値の変化から、全体の流れを直感的に読み取ることができる' },
+  { id: 29, dim:'research',      dimLabel:'研究・学術思考',    dimLabelPublic:'知的好奇心・探求派',
+    text:'診療の場でも「なぜこの治療が効くのか」を意識し、エビデンスを常に気にしてしまう',
+    textPublic:'「定説」を疑って深掘りする作業が、苦でなくむしろ楽しいと感じることが多い' },
+  { id: 30, dim:'visual',        dimLabel:'視覚的診断',        dimLabelPublic:'観察眼・ビジュアル派',
+    text:'三次元の解剖構造や立体的なイメージを、頭の中でつかんで操作することが得意だ',
+    textPublic:'地図・建物の間取り・立体図を見ると、空間が自然と頭の中に広がる' }
 ];
 
 var FALLBACK_SPECIALTIES = [
@@ -714,6 +774,36 @@ function calcScores() {
 
 var DIMS = ['hands_on','long_term','acute','research','technical','communication','visual','lifestyle','variety','precision'];
 
+// 近い診療科・キャリア（医学生モード向け）
+var RELATED_SPECIALTIES_MAP = {
+  pediatrics:    ['obgyn',           'psychiatry',      'emergency'],
+  obgyn:         ['pediatrics',      'emergency',       'urology'],
+  psychiatry:    ['neurology',       'pediatrics',      'government'],
+  emergency:     ['anesthesiology',  'cardiology',      'neurosurgery'],
+  dermatology:   ['plastics',        'radiology',       'ophthalmology'],
+  ophthalmology: ['dermatology',     'radiology',       'neurosurgery'],
+  orthopedics:   ['neurosurgery',    'gi_surgery',      'plastics'],
+  radiology:     ['researcher',      'gi_medicine',     'neurosurgery'],
+  anesthesiology:['emergency',       'cardiac_surgery', 'neurosurgery'],
+  ent:           ['ophthalmology',   'plastics',        'dermatology'],
+  neurosurgery:  ['neurology',       'emergency',       'orthopedics'],
+  urology:       ['gi_surgery',      'obgyn',           'orthopedics'],
+  researcher:    ['hematology',      'neurology',       'government'],
+  government:    ['researcher',      'psychiatry',      'pediatrics'],
+  neurology:     ['neurosurgery',    'psychiatry',      'researcher'],
+  cardiology:    ['cardiac_surgery', 'emergency',       'anesthesiology'],
+  gi_medicine:   ['gi_surgery',      'radiology',       'hematology'],
+  pulmonology:   ['thoracic_surgery','radiology',       'emergency'],
+  nephrology:    ['endocrinology',   'cardiology',      'urology'],
+  endocrinology: ['nephrology',      'cardiology',      'pediatrics'],
+  hematology:    ['researcher',      'radiology',       'pediatrics'],
+  rheumatology:  ['nephrology',      'pulmonology',     'researcher'],
+  gi_surgery:    ['gi_medicine',     'thoracic_surgery','orthopedics'],
+  cardiac_surgery:['cardiology',     'anesthesiology',  'emergency'],
+  thoracic_surgery:['pulmonology',   'radiology',       'gi_surgery'],
+  plastics:      ['dermatology',     'orthopedics',     'gi_surgery']
+};
+
 var DIM_LABEL_MAP = {
   hands_on:'手技・手術への適性', long_term:'長期的な患者との関わり',
   acute:'急性期・緊急対応力', research:'研究・学術的思考',
@@ -776,6 +866,158 @@ function buildStudentWhyReasons(sp, dimScore) {
 /**
  * Build "なぜこの科？" HTML block for student hero card (always visible).
  */
+// ══════════════════════════════════════════════════════════════════
+//  SPECIALTY MAP  (医学生モード 2軸SVGマップ)
+// ══════════════════════════════════════════════════════════════════
+
+function buildSpecialtyMap(ranked, userDimScores) {
+  if (mode !== 'student' || !ranked || !ranked.length) return '';
+
+  var W = 330, H = 290;
+  var PL = 46, PR = 46, PT = 46, PB = 46;
+  var pw = W - PL - PR;   // 238
+  var ph = H - PT - PB;   // 198
+  var cx = PL + pw / 2;   // center x
+  var cy = PT + ph / 2;   // center y
+
+  // 座標変換: specialtyのweightsから正規化位置を算出
+  function spCoord(sp) {
+    var w = sp.weights || {};
+    var acute    = ((w.acute         || 3) - 1) / 4;
+    var longTerm = ((w.long_term     || 3) - 1) / 4;
+    var handsOn  = ((w.hands_on      || 3) - 1) / 4;
+    var comm     = ((w.communication || 3) - 1) / 4;
+    return {
+      sx: PL + ((acute - longTerm + 1) / 2) * pw,
+      sy: PT + ((comm  - handsOn  + 1) / 2) * ph
+    };
+  }
+
+  // ユーザーのdimScoreから座標算出
+  function userCoord() {
+    var d = userDimScores || {};
+    var acute    = d.acute         != null ? d.acute         : 0.5;
+    var longTerm = d.long_term     != null ? d.long_term     : 0.5;
+    var handsOn  = d.hands_on      != null ? d.hands_on      : 0.5;
+    var comm     = d.communication != null ? d.communication : 0.5;
+    return {
+      sx: PL + ((acute - longTerm + 1) / 2) * pw,
+      sy: PT + ((comm  - handsOn  + 1) / 2) * ph
+    };
+  }
+
+  // ラベル配置ヘルパー
+  function anchor(sx) {
+    return sx < PL + pw * 0.28 ? 'start' : sx > PL + pw * 0.72 ? 'end' : 'middle';
+  }
+  function labelSy(sy, r) {
+    return sy > PT + ph * 0.35 ? sy - r - 5 : sy + r + 13;
+  }
+  function f(n) { return n.toFixed(1); }
+
+  var top1   = ranked[0].sp;
+  var relIds = RELATED_SPECIALTIES_MAP[top1.id] || [];
+  var relSet = {};
+  relIds.forEach(function(id) { relSet[id] = true; });
+  var allSps = getSpecialtiesForMode('student');
+  var uP     = userCoord();
+  var t1P    = spCoord(top1);
+
+  var s = ''; // svg inner content
+
+  // 背景
+  s += '<rect width="' + W + '" height="' + H + '" fill="#f9fafb" rx="8"/>';
+
+  // 象限の薄い色付け
+  var qw = pw / 2, qh = ph / 2;
+  s += '<rect x="' + f(cx) + '" y="' + PT + '" width="' + f(qw) + '" height="' + f(qh) + '" fill="#fff7ed" opacity="0.55" rx="3"/>'; // 急性期×手技
+  s += '<rect x="' + PL + '" y="' + f(cy) + '" width="' + f(qw) + '" height="' + f(qh) + '" fill="#eff6ff" opacity="0.55" rx="3"/>'; // 長期×対話
+
+  // プロットエリア枠
+  s += '<rect x="' + PL + '" y="' + PT + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="#e5e7eb" stroke-width="1" rx="4"/>';
+
+  // 中心十字線
+  s += '<line x1="' + f(cx) + '" y1="' + PT + '" x2="' + f(cx) + '" y2="' + (PT + ph) + '" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>';
+  s += '<line x1="' + PL + '" y1="' + f(cy) + '" x2="' + (PL + pw) + '" y2="' + f(cy) + '" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>';
+
+  // 軸ラベル
+  s += '<text x="' + (PL + 3) + '" y="' + (cy - 4) + '" text-anchor="start" font-size="9" fill="#9ca3af">← 長期関与</text>';
+  s += '<text x="' + (PL + pw - 3) + '" y="' + (cy - 4) + '" text-anchor="end" font-size="9" fill="#9ca3af">急性期 →</text>';
+  s += '<text x="' + cx + '" y="' + (PT - 6) + '" text-anchor="middle" font-size="9" fill="#9ca3af">手技系 ↑</text>';
+  s += '<text x="' + cx + '" y="' + (PT + ph + 16) + '" text-anchor="middle" font-size="9" fill="#9ca3af">↓ 対話系</text>';
+
+  // 象限コーナーラベル (極小)
+  s += '<text x="' + (PL + 4) + '" y="' + (PT + 13) + '" font-size="8" fill="#d1d5db">長期×手技</text>';
+  s += '<text x="' + (PL + pw - 4) + '" y="' + (PT + 13) + '" text-anchor="end" font-size="8" fill="#d1d5db">急性期×手技</text>';
+  s += '<text x="' + (PL + 4) + '" y="' + (PT + ph - 5) + '" font-size="8" fill="#d1d5db">長期×対話</text>';
+  s += '<text x="' + (PL + pw - 4) + '" y="' + (PT + ph - 5) + '" text-anchor="end" font-size="8" fill="#d1d5db">急性期×対話</text>';
+
+  // グレー点（全診療科）
+  allSps.forEach(function(sp) {
+    if (sp.id === top1.id || relSet[sp.id]) return;
+    var p = spCoord(sp);
+    s += '<circle cx="' + f(p.sx) + '" cy="' + f(p.sy) + '" r="4" fill="#d1d5db"/>';
+  });
+
+  // 近い診療科（紫）
+  relIds.forEach(function(id) {
+    var sp = SPECIALTIES.find(function(x) { return x.id === id; });
+    if (!sp || !sp.weights) return;
+    var p  = spCoord(sp);
+    var la = anchor(p.sx);
+    var ly = labelSy(p.sy, 6);
+    s += '<circle cx="' + f(p.sx) + '" cy="' + f(p.sy) + '" r="6" fill="#8b5cf6" stroke="#fff" stroke-width="1.5"/>';
+    s += '<text x="' + f(p.sx) + '" y="' + f(ly) + '" text-anchor="' + la + '" font-size="9" fill="#6d28d9" font-weight="600">' + esc(sp.name) + '</text>';
+  });
+
+  // 1位（ゴールド）
+  var t1La = anchor(t1P.sx);
+  var t1Ly = labelSy(t1P.sy, 8);
+  s += '<circle cx="' + f(t1P.sx) + '" cy="' + f(t1P.sy) + '" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2"/>';
+  s += '<text x="' + f(t1P.sx) + '" y="' + f(t1Ly) + '" text-anchor="' + t1La + '" font-size="10" fill="#92400e" font-weight="700">' + esc(top1.name) + '</text>';
+
+  // あなた（青）— 最前面
+  var uLa = anchor(uP.sx);
+  var uLy = labelSy(uP.sy, 10);
+  s += '<circle cx="' + f(uP.sx) + '" cy="' + f(uP.sy) + '" r="10" fill="#3b82f6" stroke="#fff" stroke-width="2.5"/>';
+  s += '<text x="' + f(uP.sx) + '" y="' + f(uLy) + '" text-anchor="' + uLa + '" font-size="10" fill="#1d4ed8" font-weight="700">あなた</text>';
+
+  return (
+    '<div class="sp-map-section">' +
+      '<div class="sp-map-header">' +
+        '<div class="sp-map-title">診療科マップ</div>' +
+        '<p class="sp-map-sub">傾向の違いを「位置の違い」として見てみよう</p>' +
+      '</div>' +
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" ' +
+          'class="sp-map-svg" role="img" aria-label="診療科マップ">' +
+        s +
+      '</svg>' +
+      '<div class="sp-map-legend">' +
+        '<span class="sp-map-leg"><span class="sp-map-dot" style="background:#3b82f6"></span>あなた</span>' +
+        '<span class="sp-map-leg"><span class="sp-map-dot" style="background:#f59e0b"></span>1位</span>' +
+        '<span class="sp-map-leg"><span class="sp-map-dot" style="background:#8b5cf6"></span>近い診療科</span>' +
+        '<span class="sp-map-leg"><span class="sp-map-dot sp-map-dot-sm" style="background:#d1d5db"></span>その他</span>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function buildRelatedSpecialtiesHtml(sp) {
+  var ids = RELATED_SPECIALTIES_MAP[sp.id] || sp.relatedSpecialties || [];
+  if (!ids.length) return '';
+  var tags = ids.map(function(id) {
+    var found = SPECIALTIES.find(function(s) { return s.id === id; });
+    var name  = found ? found.name : id;
+    return '<span class="tag tag-related">' + esc(name) + '</span>';
+  }).join('');
+  return (
+    '<div class="hero-related">' +
+      '<div class="hero-related-label">近い診療科・キャリア</div>' +
+      '<div class="tag-list">' + tags + '</div>' +
+    '</div>'
+  );
+}
+
 function buildWhySectionHtml(sp, dimScore) {
   var reasons = buildStudentWhyReasons(sp, dimScore);
   if (!reasons.length) return '';
@@ -877,6 +1119,12 @@ function renderResults() {
 
   // ── Hero Card (Rank 1) ──────────────────────────────────────────
   document.getElementById('results-hero').innerHTML = buildHeroCard(top5[0], 1, isPublic);
+
+  // ── Specialty Map (student mode only) ──────────────────────────
+  var mapEl = document.getElementById('results-map');
+  if (mapEl) {
+    mapEl.innerHTML = (!isPublic) ? buildSpecialtyMap(ranked, ranked[0].dimScore) : '';
+  }
 
   // ── Compact Cards (Rank 2-5) ────────────────────────────────────
   var html = '<div class="compact-cards">';
@@ -1308,6 +1556,7 @@ function buildHeroCard(item, rank, isPublic) {
       '</div>' +
       '<div class="hero-body">' +
         buildWhySectionHtml(sp, dimScore) +
+        buildRelatedSpecialtiesHtml(sp) +
         buildTraitsHtml(sp, false) +
         '<button class="detail-toggle-btn" onclick="toggleDetail(\'' + uid + '\')" id="toggle-' + uid + '">' +
           '詳細を見る<span class="toggle-arrow" id="arrow-' + uid + '">▼</span>' +
@@ -1378,6 +1627,7 @@ function buildCompactCard(item, rank, isPublic) {
           (isPublic
             ? '<div class="detail-section" style="margin-bottom:0"><div class="detail-section-title title-caution">こんな点に注意</div><div class="tag-list">' + cautionTags + '</div></div>'
             : '<div class="detail-section" style="margin-bottom:0"><div class="detail-section-title title-caution">注意しておきたい点</div><div class="tag-list">' + cautionTags + '</div></div>') +
+          (!isPublic ? buildRelatedSpecialtiesHtml(sp) : '') +
         '</div>' +
       '</div>' +
     '</div>'
