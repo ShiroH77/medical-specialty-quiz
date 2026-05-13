@@ -12,11 +12,19 @@
      WELCOME / MODE SELECTION
 ══════════════════════════════ -->
 <div id="screen-welcome" class="screen active">
-  <div class="welcome-top">
+  <div class="welcome-hero">
+    <div class="hero-deco hero-deco-1"></div>
+    <div class="hero-deco hero-deco-2"></div>
+    <div class="hero-deco hero-deco-3"></div>
     <div class="welcome-top-inner">
-      <div class="app-logo">+</div>
-      <h1 class="app-title">診療科マッチング診断</h1>
-      <p class="app-subtitle">あなたに合う診療科を発見しよう</p>
+      <div class="hero-badge">無料・30問・約5分</div>
+      <h1 class="app-title">🩺 診療科マッチング診断</h1>
+      <p class="app-subtitle">あなたはどんな診療科タイプ？<br>進路のヒントを見つけよう</p>
+      <div class="hero-chips">
+        <span class="hero-chip">🎯 本格スコアリング</span>
+        <span class="hero-chip">📊 10軸分析</span>
+        <span class="hero-chip">🔗 結果をシェア</span>
+      </div>
     </div>
   </div>
 
@@ -24,42 +32,77 @@
     <p class="mode-heading">モードを選んでスタート</p>
 
     <div class="mode-grid">
-      <button class="mode-card" onclick="selectMode('student')">
-        <div class="mode-icon-wrap mode-icon-student">
-          <span class="mode-icon-char">M</span>
+
+      <!-- ── 医学生向けキャリア探索 ── -->
+      <button class="mode-card mode-card-student" onclick="selectMode('student')">
+        <div class="mode-card-top">
+          <div class="mode-icon-wrap mode-icon-student">
+            <img src="assets/student-icon.png" alt="医学生向けアイコン" class="mode-icon-img" onerror="this.style.display='none'">
+          </div>
+          <div class="mode-info">
+            <div class="mode-title">診療科・医師キャリア探索</div>
+            <div class="mode-tagline">まじめに進路を考えたい人へ</div>
+          </div>
+          <div class="mode-arrow">›</div>
         </div>
-        <div class="mode-info">
-          <div class="mode-title">医学生向け</div>
-          <div class="mode-sub">診療科選びモード</div>
-          <div class="mode-desc">進路検討に特化した質問と、臨床的な解説で合う診療科を探す</div>
+        <div class="mode-card-body">
+          <div class="mode-features">
+            <span class="mode-feat">✓ 診断結果・上位5位を詳しく表示</span>
+            <span class="mode-feat">✓ 志望科との差分比較</span>
+            <span class="mode-feat">✓ 2軸マップ・近い診療科</span>
+          </div>
+          <div class="mode-target-row">
+            <span class="mode-target-badge">医学生・研修医向け</span>
+            <span class="mode-time">⏱ 約5分</span>
+          </div>
         </div>
-        <div class="mode-arrow">›</div>
       </button>
 
-      <button class="mode-card" onclick="selectMode('public')">
-        <div class="mode-icon-wrap mode-icon-public">
-          <span class="mode-icon-char">?</span>
+      <!-- ── 一般向けタイプ診断 ── -->
+      <button class="mode-card mode-card-public" onclick="selectMode('public')">
+        <div class="mode-card-top">
+          <div class="mode-icon-wrap mode-icon-public">
+            <img src="assets/public-icon.png" alt="一般向けアイコン" class="mode-icon-img" onerror="this.style.display='none'">
+          </div>
+          <div class="mode-info">
+            <div class="mode-title">あなたは何科タイプ？診断</div>
+            <div class="mode-tagline">性格診断感覚でサクッと楽しみたい人へ</div>
+          </div>
+          <div class="mode-arrow">›</div>
         </div>
-        <div class="mode-info">
-          <div class="mode-title">一般向け</div>
-          <div class="mode-sub">何科タイプ？モード</div>
-          <div class="mode-desc">専門用語なし！性格診断感覚で、あなたに合う診療科タイプを発見</div>
+        <div class="mode-card-body">
+          <div class="mode-features">
+            <span class="mode-feat">✓ 専門用語なし・気軽に楽しめる</span>
+            <span class="mode-feat">✓ 結果をSNSでシェア</span>
+          </div>
+          <div class="mode-target-row">
+            <span class="mode-target-badge mode-target-badge-public">どなたでも</span>
+            <span class="mode-time">⏱ 約5分</span>
+          </div>
         </div>
-        <div class="mode-arrow">›</div>
       </button>
+
+      <!-- ── ストーリーモード（準備中）── -->
+      <div class="mode-card mode-card-story" aria-disabled="true">
+        <div class="mode-card-top">
+          <div class="mode-icon-wrap mode-icon-story">
+            <img src="assets/story-icon.png" alt="ストーリーモードアイコン" class="mode-icon-img" onerror="this.style.display='none'">
+          </div>
+          <div class="mode-info">
+            <div class="mode-title mode-title-story">ストーリーモード</div>
+            <div class="mode-tagline mode-tagline-story">物語で診断する新モード、準備中</div>
+          </div>
+          <span class="coming-soon-badge">準備中</span>
+        </div>
+        <div class="mode-card-body">
+          <p class="mode-coming-note">今後追加予定 — しばらくお待ちください 🔮</p>
+        </div>
+      </div>
+
     </div>
 
-    <div class="welcome-meta">
-      <span>30問</span>
-      <span class="dot">·</span>
-      <span>5段階評価</span>
-      <span class="dot">·</span>
-      <span>所要時間 約5分</span>
-    </div>
-
-    <div class="disclaimer">
-      <strong>注意：</strong>本ツールは自己理解・進路検討の補助を目的とした参考情報です。医学的な適性診断や進路の確定を行うものではありません。実習・見学・指導医との対話を通じてご検討ください。
-    </div>
+    <p class="welcome-footnote"><strong>注意：</strong>本ツールは自己理解・進路検討の補助を目的とした参考情報です。医学的な適性診断や進路の確定を行うものではありません。</p>
+    <p class="app-version-footer" id="app-version"></p>
   </div>
 </div>
 
@@ -84,10 +127,7 @@
       <div class="q-dim-label" id="q-dim-label"></div>
       <p class="q-text" id="q-text"></p>
 
-      <div class="scale-hint-row">
-        <span>全くそう思わない</span>
-        <span>強くそう思う</span>
-      </div>
+      <div class="scale-attract-hint">この働き方・価値観にどれくらい惹かれますか？</div>
 
       <div class="scale-buttons" id="scale-buttons">
         <button class="scale-btn" data-val="1" onclick="answer(1)">1</button>
@@ -98,9 +138,11 @@
       </div>
 
       <div class="scale-labels-row">
-        <span>全くそう思わない</span>
-        <span>どちらでもない</span>
-        <span>強くそう思う</span>
+        <span>惹かれ<br>ない</span>
+        <span>あまり<br>惹かれない</span>
+        <span>こだわり<br>なし</span>
+        <span>やや<br>惹かれる</span>
+        <span>強く<br>惹かれる</span>
       </div>
 
       <p class="scale-hint-prev" id="scale-hint-prev"></p>
@@ -117,6 +159,7 @@
   <div class="card-wrap">
     <div id="results-notices"></div>
     <div id="results-summary"></div>
+    <div id="results-quick-share"></div>
 
     <div id="results-detail">
       <div id="results-hero"></div>
@@ -140,6 +183,10 @@
   </div>
 </div>
 
+<!-- Hidden share card — rendered off-screen for image export -->
+<div id="share-card-wrap" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="scoring.js"></script>
 <script src="app.js"></script>
 </body>

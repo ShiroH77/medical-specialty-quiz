@@ -1,5 +1,7 @@
 'use strict';
 
+var VERSION = '20.5';
+
 // ══════════════════════════════════════════════════════════════════
 //  EMBEDDED DATA (fallback when fetch fails / opened via file://)
 //  Source of truth: data/questions.json & data/specialties.json
@@ -610,6 +612,10 @@ function selectMode(m) {
   });
   startQuiz();
 }
+
+function selectStoryMode() {
+  // Coming Soon — no-op
+}
 function goTop()        { showScreen('welcome'); }
 
 // ══════════════════════════════════════════════════════════════════
@@ -870,17 +876,46 @@ function buildStudentWhyReasons(sp, dimScore) {
 //  SPECIALTY MAP  (医学生モード 2軸SVGマップ)
 // ══════════════════════════════════════════════════════════════════
 
+// Short labels for SVG map (≤4-5 chars to avoid overflow)
+var SP_MAP_LABELS = {
+  pediatrics:       '小児科',
+  obgyn:            '産婦人科',
+  psychiatry:       '精神科',
+  emergency:        '救急科',
+  dermatology:      '皮膚科',
+  ophthalmology:    '眼科',
+  orthopedics:      '整形外',
+  radiology:        '放射線',
+  anesthesiology:   '麻酔科',
+  ent:              '耳鼻科',
+  neurosurgery:     '脳外科',
+  urology:          '泌尿器',
+  researcher:       '研究医',
+  government:       '行政医',
+  neurology:        '神経内',
+  cardiology:       '循環器',
+  gi_medicine:      '消化器内',
+  pulmonology:      '呼吸器内',
+  nephrology:       '腎臓内',
+  endocrinology:    '内分泌',
+  hematology:       '血液内',
+  rheumatology:     'リウマチ',
+  gi_surgery:       '消化器外',
+  cardiac_surgery:  '心臓外',
+  thoracic_surgery: '呼吸器外',
+  plastics:         '形成外科'
+};
+
 function buildSpecialtyMap(ranked, userDimScores) {
   if (mode !== 'student' || !ranked || !ranked.length) return '';
 
-  var W = 330, H = 290;
-  var PL = 46, PR = 46, PT = 46, PB = 46;
-  var pw = W - PL - PR;   // 238
-  var ph = H - PT - PB;   // 198
-  var cx = PL + pw / 2;   // center x
-  var cy = PT + ph / 2;   // center y
+  var W = 340, H = 300;
+  var PL = 48, PR = 48, PT = 48, PB = 36;
+  var pw = W - PL - PR;   // 244
+  var ph = H - PT - PB;   // 216
+  var cx = PL + pw / 2;
+  var cy = PT + ph / 2;
 
-  // 座標変換: specialtyのweightsから正規化位置を算出
   function spCoord(sp) {
     var w = sp.weights || {};
     var acute    = ((w.acute         || 3) - 1) / 4;
@@ -893,7 +928,6 @@ function buildSpecialtyMap(ranked, userDimScores) {
     };
   }
 
-  // ユーザーのdimScoreから座標算出
   function userCoord() {
     var d = userDimScores || {};
     var acute    = d.acute         != null ? d.acute         : 0.5;
@@ -906,100 +940,252 @@ function buildSpecialtyMap(ranked, userDimScores) {
     };
   }
 
-  // ラベル配置ヘルパー
+  function f(n) { return n.toFixed(1); }
+
   function anchor(sx) {
     return sx < PL + pw * 0.28 ? 'start' : sx > PL + pw * 0.72 ? 'end' : 'middle';
   }
-  function labelSy(sy, r) {
-    return sy > PT + ph * 0.35 ? sy - r - 5 : sy + r + 13;
+
+  function prefLy(sy, r) {
+    return sy > cy ? sy - r - 4 : sy + r + 11;
   }
-  function f(n) { return n.toFixed(1); }
 
   var top1   = ranked[0].sp;
-  var relIds = RELATED_SPECIALTIES_MAP[top1.id] || [];
-  var relSet = {};
-  relIds.forEach(function(id) { relSet[id] = true; });
   var allSps = getSpecialtiesForMode('student');
   var uP     = userCoord();
   var t1P    = spCoord(top1);
 
-  var s = ''; // svg inner content
+  // rank+pct lookup for tooltips
+  var rankMap = {};
+  ranked.forEach(function(item, idx) {
+    rankMap[item.sp.id] = { pct: item.pct, rank: idx + 1 };
+  });
 
-  // 背景
+  var s = '';
+
+  // Background
   s += '<rect width="' + W + '" height="' + H + '" fill="#f9fafb" rx="8"/>';
 
-  // 象限の薄い色付け
+  // Quadrant shading
   var qw = pw / 2, qh = ph / 2;
-  s += '<rect x="' + f(cx) + '" y="' + PT + '" width="' + f(qw) + '" height="' + f(qh) + '" fill="#fff7ed" opacity="0.55" rx="3"/>'; // 急性期×手技
-  s += '<rect x="' + PL + '" y="' + f(cy) + '" width="' + f(qw) + '" height="' + f(qh) + '" fill="#eff6ff" opacity="0.55" rx="3"/>'; // 長期×対話
+  s += '<rect x="' + f(cx) + '" y="' + PT + '" width="' + f(qw) + '" height="' + f(qh) + '" fill="#fff7ed" opacity="0.55" rx="3"/>';
+  s += '<rect x="' + PL + '" y="' + f(cy) + '" width="' + f(qw) + '" height="' + f(qh) + '" fill="#eff6ff" opacity="0.55" rx="3"/>';
 
-  // プロットエリア枠
+  // Plot area border
   s += '<rect x="' + PL + '" y="' + PT + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="#e5e7eb" stroke-width="1" rx="4"/>';
 
-  // 中心十字線
+  // Center crosshairs
   s += '<line x1="' + f(cx) + '" y1="' + PT + '" x2="' + f(cx) + '" y2="' + (PT + ph) + '" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>';
   s += '<line x1="' + PL + '" y1="' + f(cy) + '" x2="' + (PL + pw) + '" y2="' + f(cy) + '" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>';
 
-  // 軸ラベル
+  // Axis labels
   s += '<text x="' + (PL + 3) + '" y="' + (cy - 4) + '" text-anchor="start" font-size="9" fill="#9ca3af">← 長期関与</text>';
   s += '<text x="' + (PL + pw - 3) + '" y="' + (cy - 4) + '" text-anchor="end" font-size="9" fill="#9ca3af">急性期 →</text>';
-  s += '<text x="' + cx + '" y="' + (PT - 6) + '" text-anchor="middle" font-size="9" fill="#9ca3af">手技系 ↑</text>';
-  s += '<text x="' + cx + '" y="' + (PT + ph + 16) + '" text-anchor="middle" font-size="9" fill="#9ca3af">↓ 対話系</text>';
+  s += '<text x="' + cx + '" y="' + (PT - 7) + '" text-anchor="middle" font-size="9" fill="#9ca3af">手技系 ↑</text>';
+  s += '<text x="' + cx + '" y="' + (PT + ph + 14) + '" text-anchor="middle" font-size="9" fill="#9ca3af">↓ 対話系</text>';
 
-  // 象限コーナーラベル (極小)
-  s += '<text x="' + (PL + 4) + '" y="' + (PT + 13) + '" font-size="8" fill="#d1d5db">長期×手技</text>';
-  s += '<text x="' + (PL + pw - 4) + '" y="' + (PT + 13) + '" text-anchor="end" font-size="8" fill="#d1d5db">急性期×手技</text>';
+  // Corner labels
+  s += '<text x="' + (PL + 4) + '" y="' + (PT + 12) + '" font-size="8" fill="#d1d5db">長期×手技</text>';
+  s += '<text x="' + (PL + pw - 4) + '" y="' + (PT + 12) + '" text-anchor="end" font-size="8" fill="#d1d5db">急性期×手技</text>';
   s += '<text x="' + (PL + 4) + '" y="' + (PT + ph - 5) + '" font-size="8" fill="#d1d5db">長期×対話</text>';
   s += '<text x="' + (PL + pw - 4) + '" y="' + (PT + ph - 5) + '" text-anchor="end" font-size="8" fill="#d1d5db">急性期×対話</text>';
 
-  // グレー点（全診療科）
+  // Gray dots — all specialties except rank-1, each with tooltip data
   allSps.forEach(function(sp) {
-    if (sp.id === top1.id || relSet[sp.id]) return;
-    var p = spCoord(sp);
-    s += '<circle cx="' + f(p.sx) + '" cy="' + f(p.sy) + '" r="4" fill="#d1d5db"/>';
+    if (sp.id === top1.id) return;
+    var p    = spCoord(sp);
+    var info = rankMap[sp.id] || { pct: 0, rank: '-' };
+    s += '<g class="sp-map-gray-dot" data-spid="' + sp.id + '" data-rank="' + info.rank + '" data-pct="' + info.pct + '" style="cursor:pointer">';
+    s += '<circle cx="' + f(p.sx) + '" cy="' + f(p.sy) + '" r="11" fill="transparent"/>'; // hit area
+    s += '<circle cx="' + f(p.sx) + '" cy="' + f(p.sy) + '" r="4" fill="#d1d5db" class="sp-dot-vis"/>';
+    s += '</g>';
   });
 
-  // 近い診療科（紫）
-  relIds.forEach(function(id) {
-    var sp = SPECIALTIES.find(function(x) { return x.id === id; });
-    if (!sp || !sp.weights) return;
-    var p  = spCoord(sp);
-    var la = anchor(p.sx);
-    var ly = labelSy(p.sy, 6);
-    s += '<circle cx="' + f(p.sx) + '" cy="' + f(p.sy) + '" r="6" fill="#8b5cf6" stroke="#fff" stroke-width="1.5"/>';
-    s += '<text x="' + f(p.sx) + '" y="' + f(ly) + '" text-anchor="' + la + '" font-size="9" fill="#6d28d9" font-weight="600">' + esc(sp.name) + '</text>';
-  });
+  // Rank-1 dot — wrapped in <g> for tooltip
+  var t1Short = SP_MAP_LABELS[top1.id] || top1.name;
+  var t1La    = anchor(t1P.sx);
+  var t1Ly    = prefLy(t1P.sy, 9);
+  s += '<g class="sp-map-ranked-dot" data-spid="' + top1.id + '" data-rank="1" data-pct="' + ranked[0].pct + '" style="cursor:pointer">';
+  s += '<circle cx="' + f(t1P.sx) + '" cy="' + f(t1P.sy) + '" r="15" fill="transparent"/>'; // hit area
+  s += '<circle cx="' + f(t1P.sx) + '" cy="' + f(t1P.sy) + '" r="9" fill="#f59e0b" stroke="#fff" stroke-width="2"/>';
+  s += '<text x="' + f(t1P.sx) + '" y="' + f(t1P.sy + 3.5) + '" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">★</text>';
+  s += '</g>';
+  // Rank-1 external label (outside group — won't trigger tooltip)
+  s += '<text x="' + f(t1P.sx) + '" y="' + f(t1Ly) + '" text-anchor="' + t1La + '" font-size="10" fill="#92400e" font-weight="700">' + esc(t1Short) + '</text>';
 
-  // 1位（ゴールド）
-  var t1La = anchor(t1P.sx);
-  var t1Ly = labelSy(t1P.sy, 8);
-  s += '<circle cx="' + f(t1P.sx) + '" cy="' + f(t1P.sy) + '" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2"/>';
-  s += '<text x="' + f(t1P.sx) + '" y="' + f(t1Ly) + '" text-anchor="' + t1La + '" font-size="10" fill="#92400e" font-weight="700">' + esc(top1.name) + '</text>';
-
-  // あなた（青）— 最前面
+  // User dot — wrapped in <g> for tooltip
   var uLa = anchor(uP.sx);
-  var uLy = labelSy(uP.sy, 10);
+  var uLy = prefLy(uP.sy, 10);
+  var xClose = Math.abs(uP.sx - t1P.sx) < 55;
+  var yClose = Math.abs(uLy - t1Ly) < 15;
+  if (xClose && yClose) {
+    uLy = (uP.sy > cy) ? uP.sy + 10 + 11 : uP.sy - 10 - 4;
+  }
+  uLy = Math.max(12, Math.min(H - 4, uLy));
+  s += '<g class="sp-map-user-dot" data-type="user" data-ucx="' + f(uP.sx) + '" data-ucy="' + f(uP.sy) + '" data-plotcx="' + f(cx) + '" data-plotcy="' + f(cy) + '" style="cursor:pointer">';
+  s += '<circle cx="' + f(uP.sx) + '" cy="' + f(uP.sy) + '" r="15" fill="transparent"/>'; // hit area
   s += '<circle cx="' + f(uP.sx) + '" cy="' + f(uP.sy) + '" r="10" fill="#3b82f6" stroke="#fff" stroke-width="2.5"/>';
+  s += '<text x="' + f(uP.sx) + '" y="' + f(uP.sy + 4) + '" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">私</text>';
+  s += '</g>';
+  // User external label
   s += '<text x="' + f(uP.sx) + '" y="' + f(uLy) + '" text-anchor="' + uLa + '" font-size="10" fill="#1d4ed8" font-weight="700">あなた</text>';
 
   return (
     '<div class="sp-map-section">' +
       '<div class="sp-map-header">' +
-        '<div class="sp-map-title">診療科マップ</div>' +
-        '<p class="sp-map-sub">傾向の違いを「位置の違い」として見てみよう</p>' +
+        '<div class="sp-map-title">診療科マップ（2軸）</div>' +
+        '<p class="sp-map-sub">急性期↔長期関与 × 手技系↔対話系の位置関係を探索できます</p>' +
       '</div>' +
       '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" ' +
-          'class="sp-map-svg" role="img" aria-label="診療科マップ">' +
+          'class="sp-map-svg" role="img" aria-label="診療科マップ" ' +
+          'data-plot-cx="' + f(cx) + '" data-plot-cy="' + f(cy) + '">' +
         s +
       '</svg>' +
       '<div class="sp-map-legend">' +
         '<span class="sp-map-leg"><span class="sp-map-dot" style="background:#3b82f6"></span>あなた</span>' +
-        '<span class="sp-map-leg"><span class="sp-map-dot" style="background:#f59e0b"></span>1位</span>' +
-        '<span class="sp-map-leg"><span class="sp-map-dot" style="background:#8b5cf6"></span>近い診療科</span>' +
-        '<span class="sp-map-leg"><span class="sp-map-dot sp-map-dot-sm" style="background:#d1d5db"></span>その他</span>' +
+        '<span class="sp-map-leg"><span class="sp-map-dot" style="background:#f59e0b"></span>1位(★)</span>' +
+        '<span class="sp-map-leg"><span class="sp-map-dot sp-map-dot-sm" style="background:#d1d5db"></span>その他（点をタップで詳細）</span>' +
       '</div>' +
+      '<p class="sp-map-note">このマップは急性期/長期・手技系/対話系の<strong>2軸のみ</strong>で位置関係を表しています。総合マッチ度は10の傾向軸すべてで計算しているため、<strong>マップ上の距離と総合順位は一致しない</strong>場合があります。</p>' +
     '</div>'
   );
+}
+
+function initMapTooltips(ranked) {
+  var section = document.querySelector('.sp-map-section');
+  if (!section) return;
+  var svg = section.querySelector('.sp-map-svg');
+  if (!svg) return;
+
+  // id → {name, tagline, pct, rank}
+  var lookup = {};
+  ranked.forEach(function(item, idx) {
+    lookup[item.sp.id] = {
+      name:    item.sp.name,
+      tagline: item.sp.tagline || item.sp.oneLine || '',
+      pct:     item.pct,
+      rank:    idx + 1
+    };
+  });
+
+  // Tooltip element (absolutely positioned inside section)
+  var tip = document.createElement('div');
+  tip.className = 'sp-map-tip';
+  tip.style.display = 'none';
+  section.style.position = 'relative';
+  section.appendChild(tip);
+
+  var activeDot = null;
+
+  var DOT_CLASSES = ['sp-map-gray-dot', 'sp-map-ranked-dot', 'sp-map-user-dot'];
+  function closestDot(el) {
+    while (el && el !== svg) {
+      if (el.classList) {
+        for (var i = 0; i < DOT_CLASSES.length; i++) {
+          if (el.classList.contains(DOT_CLASSES[i])) return el;
+        }
+      }
+      el = el.parentElement || el.parentNode;
+    }
+    return null;
+  }
+
+  function buildTipContent(gEl) {
+    if (gEl.classList.contains('sp-map-user-dot')) {
+      // User dot: show axis tendencies
+      var ux  = parseFloat(gEl.getAttribute('data-ucx'))  || 170;
+      var uy  = parseFloat(gEl.getAttribute('data-ucy'))  || 156;
+      var pcx = parseFloat(gEl.getAttribute('data-plotcx')) || 170;
+      var pcy = parseFloat(gEl.getAttribute('data-plotcy')) || 156;
+      var axisX = ux > pcx ? '急性期寄り' : '長期関与寄り';
+      var axisY = uy < pcy ? '手技系寄り' : '対話系寄り';
+      return (
+        '<div class="sp-tip-name">あなたの傾向位置</div>' +
+        '<div class="sp-tip-axes">' + axisX + '・' + axisY + '</div>'
+      );
+    }
+    var spid = gEl.getAttribute('data-spid');
+    var info = lookup[spid];
+    if (!info) return '';
+    var rankLabel = info.rank === 1 ? '★ 1位' : info.rank + '位';
+    return (
+      '<div class="sp-tip-name">' + esc(info.name) +
+        '<span class="sp-tip-pct">' + info.pct + '%</span>' +
+      '</div>' +
+      '<div class="sp-tip-rank">' + rankLabel + '</div>' +
+      '<div class="sp-tip-line">' + esc(info.tagline) + '</div>'
+    );
+  }
+
+  function getDotCenter(gEl) {
+    var hit = gEl.querySelector('circle');
+    return {
+      cx: parseFloat(hit.getAttribute('cx')),
+      cy: parseFloat(hit.getAttribute('cy'))
+    };
+  }
+
+  function showTip(gEl) {
+    var content = buildTipContent(gEl);
+    if (!content) return;
+    tip.innerHTML = content;
+    tip.style.display = 'block';
+
+    // Map SVG viewBox coords → screen coords relative to section
+    var dc      = getDotCenter(gEl);
+    var svgRect = svg.getBoundingClientRect();
+    var secRect = section.getBoundingClientRect();
+    var vb      = svg.viewBox.baseVal;
+    var scaleX  = svgRect.width  / vb.width;
+    var scaleY  = svgRect.height / vb.height;
+    var dotLeft = (svgRect.left - secRect.left) + dc.cx * scaleX;
+    var dotTop  = (svgRect.top  - secRect.top)  + dc.cy * scaleY;
+
+    var tipW = tip.offsetWidth  || 170;
+    var tipH = tip.offsetHeight || 68;
+
+    var left = dotLeft - tipW / 2;
+    var top  = dotTop  - tipH - 12;
+
+    // Clamp horizontally; keep arrow pointing at dot center
+    left = Math.max(4, Math.min(secRect.width - tipW - 4, left));
+    var isFlipped = top < 4;
+    if (isFlipped) top = dotTop + 14;
+
+    // Arrow offset relative to tooltip left edge, clamped inside tooltip
+    var arrowX = Math.max(12, Math.min(tipW - 12, Math.round(dotLeft - left)));
+    tip.style.setProperty('--sp-arrow-x', arrowX + 'px');
+    tip.style.left = Math.round(left) + 'px';
+    tip.style.top  = Math.round(top)  + 'px';
+    tip.classList.toggle('sp-map-tip-flipped', isFlipped);
+    activeDot = gEl;
+  }
+
+  function hideTip() {
+    tip.style.display = 'none';
+    activeDot = null;
+  }
+
+  // Desktop hover
+  svg.addEventListener('mouseover', function(e) {
+    var g = closestDot(e.target);
+    if (g) showTip(g); else hideTip();
+  });
+  svg.addEventListener('mouseleave', hideTip);
+
+  // Mobile tap toggle
+  svg.addEventListener('touchstart', function(e) {
+    var g = closestDot(e.target);
+    if (!g) { hideTip(); return; }
+    if (g === activeDot) { hideTip(); return; }
+    e.preventDefault();
+    showTip(g);
+  }, { passive: false });
+
+  // Tap outside → hide
+  document.addEventListener('touchstart', function(e) {
+    if (tip.style.display !== 'none' && !section.contains(e.target)) hideTip();
+  }, { passive: true });
 }
 
 function buildRelatedSpecialtiesHtml(sp) {
@@ -1012,7 +1198,7 @@ function buildRelatedSpecialtiesHtml(sp) {
   }).join('');
   return (
     '<div class="hero-related">' +
-      '<div class="hero-related-label">近い診療科・キャリア</div>' +
+      '<div class="hero-related-label">周辺分野・進路探索の参考</div>' +
       '<div class="tag-list">' + tags + '</div>' +
     '</div>'
   );
@@ -1124,6 +1310,7 @@ function renderResults() {
   var mapEl = document.getElementById('results-map');
   if (mapEl) {
     mapEl.innerHTML = (!isPublic) ? buildSpecialtyMap(ranked, ranked[0].dimScore) : '';
+    if (!isPublic) initMapTooltips(ranked);
   }
 
   // ── Compact Cards (Rank 2-5) ────────────────────────────────────
@@ -1132,10 +1319,18 @@ function renderResults() {
   html += '</div>';
   document.getElementById('results-compact').innerHTML = html;
 
-  // ── Share Section ───────────────────────────────────────────────
+  // ── Share text & quick-share block (first view) ─────────────────
   currentShareText = buildShareText(top5, isPublic);
+  var quickShareEl = document.getElementById('results-quick-share');
+  if (quickShareEl) quickShareEl.innerHTML = buildQuickShare(currentShareText, isPublic);
+
+  // ── Share Section (inside detail — text preview + image save) ───
   var shareEl = document.getElementById('results-share');
   if (shareEl) shareEl.innerHTML = buildShareSection(currentShareText, isPublic);
+
+  // ── Share Card (hidden, for image export) ───────────────────────
+  var cardWrap = document.getElementById('share-card-wrap');
+  if (cardWrap) cardWrap.innerHTML = buildShareCard(ranked, isPublic);
 
   // ── All Specialties Section ─────────────────────────────────────
   currentRanked = ranked;
@@ -1197,9 +1392,11 @@ function buildShareText(top5, isPublic) {
            'あなたも診断してみて👇\n' + url;
   }
 
-  var lines = ['私の診療科・医師キャリア適性診断 結果'];
+  var lines = ['【診療科マッチング診断 結果】', ''];
   top5.forEach(function(item, i) {
-    lines.push((i + 1) + '位：' + item.sp.name);
+    var tagline = item.sp.tagline || '';
+    lines.push((i + 1) + '位：' + item.sp.name + '（' + item.pct + '%）');
+    if (tagline) lines.push('　　' + tagline);
   });
   lines.push('');
   lines.push('あなたも診断してみて👇');
@@ -1209,12 +1406,115 @@ function buildShareText(top5, isPublic) {
 
 function buildShareSection(text, isPublic) {
   return (
-    '<div class="share-box">' +
-      '<div class="share-box-label">' + (isPublic ? '📣 友達にシェアしよう' : '📣 シェアする') + '</div>' +
-      '<div class="share-text">' + esc(text).replace(/\n/g, '<br>') + '</div>' +
-      '<button class="btn-copy" id="btn-copy" onclick="copyShareText()">結果をコピー 📋</button>' +
+    '<div class="share-img-section">' +
+      '<button class="btn-save-img-detail" onclick="generateShareImage()">🖼 画像カードとして保存する</button>' +
     '</div>'
   );
+}
+
+function buildQuickShare(text, isPublic) {
+  var label = isPublic ? '結果をシェアしよう' : '結果をシェアする';
+  var btnLabel = isPublic ? '📋 結果をコピーする' : '📋 結果をコピーする（1〜5位＋URL）';
+  return (
+    '<div class="quick-share-box">' +
+      '<div class="quick-share-label">' + label + '</div>' +
+      '<div class="share-preview">' + esc(text).replace(/\n/g, '<br>') + '</div>' +
+      '<button class="btn-copy-primary" id="btn-copy-primary" onclick="copyShareText()">' +
+        btnLabel +
+      '</button>' +
+      '<div class="quick-share-sub">' +
+        '<button class="btn-copy-url" id="btn-copy-url" onclick="copyUrl()">🔗 URLをコピー</button>' +
+        '<button class="btn-save-img-sm" onclick="generateShareImage()">🖼 画像で保存</button>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+// ── Share card (image export) ─────────────────────────────────────
+
+function buildShareCard(ranked, isPublic) {
+  var best  = ranked[0];
+  var sp    = best.sp;
+  var rank2 = ranked[1];
+  var rank3 = ranked[2];
+
+  var name    = isPublic && sp.typeName    ? sp.typeName    : sp.name;
+  var oneLine = isPublic && sp.catchphrase ? sp.catchphrase : (sp.tagline || sp.oneLine || '');
+  var rawDesc = isPublic
+    ? (sp.publicDescription  || sp.desc || '')
+    : (sp.studentDescription || sp.desc || '');
+  var desc = rawDesc.length > 95 ? rawDesc.slice(0, 93) + '…' : rawDesc;
+
+  var bgClass = isPublic ? 'sc-bg-public' : 'sc-bg-student';
+  var topLabel = isPublic ? 'あなたのタイプは' : 'あなたは';
+  var url = (location.origin + location.pathname).replace(/^https?:\/\//, '');
+
+  var name2 = rank2 ? (isPublic && rank2.sp.typeName ? rank2.sp.typeName : rank2.sp.name) : '';
+  var name3 = rank3 ? (isPublic && rank3.sp.typeName ? rank3.sp.typeName : rank3.sp.name) : '';
+  var pct2  = rank2 ? rank2.pct : 0;
+  var pct3  = rank3 ? rank3.pct : 0;
+
+  var ranksHtml = '';
+  if (rank2) ranksHtml +=
+    '<div class="sc-rank-row">' +
+      '<span class="sc-rank-num">2位</span>' +
+      '<span class="sc-rank-name">' + esc(name2) + '</span>' +
+      '<span class="sc-rank-pct">' + pct2 + '%</span>' +
+    '</div>';
+  if (rank3) ranksHtml +=
+    '<div class="sc-rank-row">' +
+      '<span class="sc-rank-num">3位</span>' +
+      '<span class="sc-rank-name">' + esc(name3) + '</span>' +
+      '<span class="sc-rank-pct">' + pct3 + '%</span>' +
+    '</div>';
+
+  return (
+    '<div class="sc-outer ' + bgClass + '">' +
+      '<div class="sc-header">' +
+        '<span class="sc-site-name">🩺 診療科マッチング診断</span>' +
+        '<span class="sc-score-badge">' + best.pct + '%</span>' +
+      '</div>' +
+      '<div class="sc-main">' +
+        '<div class="sc-top-label">' + topLabel + '</div>' +
+        '<div class="sc-name">' + esc(name) + '</div>' +
+        (oneLine ? '<div class="sc-oneline">' + esc(oneLine) + '</div>' : '') +
+        (desc    ? '<div class="sc-desc">' + esc(desc) + '</div>' : '') +
+        '<div class="sc-ranks">' + ranksHtml + '</div>' +
+      '</div>' +
+      '<div class="sc-footer">' +
+        '<span class="sc-footer-brand">🩺 診療科マッチング診断</span>' +
+        '<span class="sc-footer-url">' + esc(url) + '</span>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function generateShareImage() {
+  var wrap = document.getElementById('share-card-wrap');
+  if (!wrap) return;
+  if (typeof html2canvas === 'undefined') {
+    alert('画像生成ライブラリを読み込み中です。しばらくしてから再度お試しください。');
+    return;
+  }
+  var btn = document.getElementById('btn-save-img');
+  if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
+
+  html2canvas(wrap.querySelector('.sc-outer'), {
+    scale: 2,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: null,
+    logging: false
+  }).then(function(canvas) {
+    var link = document.createElement('a');
+    link.download = '診療科診断_結果カード.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    if (btn) { btn.disabled = false; btn.textContent = '画像で保存 🖼️'; }
+  }).catch(function() {
+    if (btn) { btn.disabled = false; btn.textContent = '画像で保存 🖼️'; }
+    alert('画像の生成に失敗しました。スクリーンショット機能をご利用ください。');
+  });
 }
 
 // ── All Specialties Section ───────────────────────────────────────
@@ -1441,11 +1741,14 @@ function buildCompareChart(userDims, sp) {
 }
 
 function copyShareText() {
-  var btn = document.getElementById('btn-copy');
+  var btn = document.getElementById('btn-copy-primary') || document.getElementById('btn-copy');
+  var origText = btn ? btn.textContent : '';
   function onSuccess() {
-    btn.textContent = 'コピーしました ✓';
-    btn.classList.add('copied');
-    setTimeout(function() { btn.textContent = '結果をコピー 📋'; btn.classList.remove('copied'); }, 2500);
+    if (btn) {
+      btn.textContent = '✓ コピーしました！';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = origText; btn.classList.remove('copied'); }, 2500);
+    }
   }
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(currentShareText).then(onSuccess).catch(fallback);
@@ -1453,6 +1756,29 @@ function copyShareText() {
   function fallback() {
     var ta = document.createElement('textarea');
     ta.value = currentShareText;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;width:1px;height:1px';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); onSuccess(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+}
+
+function copyUrl() {
+  var url = location.origin + location.pathname;
+  var btn = document.getElementById('btn-copy-url');
+  var origText = btn ? btn.textContent : '';
+  function onSuccess() {
+    if (btn) {
+      btn.textContent = '✓ コピー済み';
+      setTimeout(function() { btn.textContent = origText; }, 2000);
+    }
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(onSuccess).catch(fallback);
+  } else { fallback(); }
+  function fallback() {
+    var ta = document.createElement('textarea');
+    ta.value = url;
     ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;width:1px;height:1px';
     document.body.appendChild(ta); ta.focus(); ta.select();
     try { document.execCommand('copy'); onSuccess(); } catch(e) {}
@@ -1767,6 +2093,9 @@ window.toggleAllSpecialties  = toggleAllSpecialties;
 window.toggleAllSp           = toggleAllSp;
 window.toggleCompareSection  = toggleCompareSection;
 window.compareWithSpecialty  = compareWithSpecialty;
+window.selectStoryMode       = selectStoryMode;
+window.generateShareImage    = generateShareImage;
+window.copyUrl               = copyUrl;
 
 // ══════════════════════════════════════════════════════════════════
 //  DEBUG UTILS  (call from browser console)
@@ -1832,4 +2161,8 @@ window.runScoringTests = runScoringTests;
 //  BOOT
 // ══════════════════════════════════════════════════════════════════
 
-loadData(function() { showScreen('welcome'); });
+loadData(function() {
+  showScreen('welcome');
+  var vEl = document.getElementById('app-version');
+  if (vEl) vEl.textContent = 'v' + VERSION;
+});
